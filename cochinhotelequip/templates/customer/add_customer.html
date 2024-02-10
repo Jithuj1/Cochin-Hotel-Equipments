@@ -1,0 +1,200 @@
+{% extends 'admin/base.html' %}
+
+{% load static %}
+
+{% block title %} CHE.Home {% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4" style="width: 100%;">
+            <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
+                <form method="post" action="{% url 'new_customer' %}">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <a href="index.html" class="">
+                            <h4 class="text-white"><i class="fa fa-user-edit me-2"></i>Add New Customer</h4>
+                        </a>
+                        {% if messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for message in messages %}
+                            {{ message }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="form-floating mb-3">
+                            <input name="first_name" type="text" class="form-control" id="floatingText"
+                                placeholder="jhondoe">
+                            <label for="floatingText">First Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input name="last_name" type="text" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Last Name</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input name="email" type="email" class="form-control" id="floatingText"
+                                placeholder="jhondoe">
+                            <label for="floatingText">Email address</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input name="phone" type="phone" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Phone Number</label>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="form-floating mb-3">
+                            <input name="display_name" type="text" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Display Name</label>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 25%; display: flex;">
+                            <div class="bg-dark"
+                                style=" width: 60%; display: flex; align-items: center; justify-content: center;">GST
+                                Customer</div>
+                            <div>
+                                <select name="gst_cus" class="form-select" id="gstCustomerSelect"
+                                    aria-label="Select GST Customer" style="text-align: right; height: 100%;">
+                                    <option value="False">False</option>
+                                    <option value="True">True</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 40%;">
+                            <input name="remarks" type="text" class="form-control" id="floatingText"
+                                placeholder="jhondoe">
+                            <label for="floatingText">Remarks</label>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-white" style="padding: 10px;"> Address Details</h4>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; height: 100%;">
+                        <div class="form-floating mb-3" style="width: 30%; display: flex;">
+                            <div class="bg-dark"
+                                style=" width: 60%; display: flex; align-items: center; padding-left: 12px;">Country
+                            </div>
+                            <div>
+                                <select name="country" class="form-select" id="gstCustomerSelect"
+                                    aria-label="Select GST Customer" style="text-align: right; height: 100%;">
+                                    <option value="India">India</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 30%; display: flex;">
+                            <div class="bg-dark"
+                                style=" width: 60%; display: flex; align-items: center; padding-left: 12px;">State
+                            </div>
+                            <div>
+                                <select name="state" class="form-select" id="gstCustomerSelect"
+                                    aria-label="Select GST Customer" style="text-align: left; height: 100%;">
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 30%; display: flex;">
+                            <input name="city" class="form-control" id="floatingInput" placeholder="name@example.com">
+                            <label for="floatingInput">city</label>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="form-floating mb-3" style="width: 30%;">
+                            <input name="street1" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Street 1</label>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 30%;">
+                            <input name="street2" type="text" class="form-control" id="floatingText"
+                                placeholder="jhondoe">
+                            <label for="floatingText">Street 2</label>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 30%;">
+                            <input name="pincode" type="number" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Pincode</label>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; ">
+                        <div class="form-floating mb-3" style="width: 25%; display: flex;">
+                            <div class="bg-dark"
+                                style=" width: 60%; display: flex; align-items: center; justify-content: center;">
+                                Default
+                                Address</div>
+                            <div>
+                                <select name="default_address" class="form-select" id="gstCustomerSelect"
+                                    aria-label="Select GST Customer" style="text-align: right; height: 100%;">
+                                    <option value="True">True</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 25%; display: flex;">
+                            <div class="bg-dark"
+                                style=" width: 60%; display: flex; align-items: center; justify-content: center;">
+                                Address
+                                Type</div>
+                            <div>
+                                <select name="address_type" class="form-select" id="gstCustomerSelect"
+                                    aria-label="Select GST Customer" style="text-align: right; height: 100%;">
+                                    <option value="BILLING">BILLING</option>
+                                    <option value="DELIVERY">DELIVERY</option>
+                                    <option value="PERSONAL">PERSONAL</option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-floating mb-3" style="width: 40%;">
+                            <input name="lan_mark" type="text" class="form-control" id="floatingText"
+                                placeholder="jhondoe">
+                            <label for="floatingText">Lan Mark</label>
+                        </div>
+                    </div>
+                    <div style="width: 100%; display: flex; justify-content: end;">
+                        <a style="width: 12%; margin-top: 10px; margin-right: 10px;" href="{% url 'customer' %}"
+                            class="btn btn-danger py-3 mb-4">Cancel</a>
+                        <button style="width: 12%; margin-top: 10px;" type="submit"
+                            class="btn btn-success py-3 mb-4">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'admin/base.html' %}
+
+{% load static %}
+
+{% block title %}
+  CHE.Home
+{% endblock %}
+
+{% block content %}
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal{{ customer.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete customer '{{ customer.full_name }}'?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="" class="btn btn-danger">Yes, Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+  <!-- end of delete modal -->
+
+  <!-- Recent Sales Start -->
+  <div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h6 class="mb-0">All Coustomers</h6>
+        <form class="d-none d-md-flex ms-4" method="post" action="{% url 'customer' %}">
+          {% csrf_token %}
+          <input class="form-control bg-dark border-0" name="search" type="search" placeholder="Search" />
+          <button class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
+        </form>
+        <a class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);" href="{% url 'new_customer' %}">Add customer</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table text-start align-middle table-bordered table-hover mb-0">
+          <thead>
+            <tr class="text-white">
+              <th scope="col">
+                <input class="form-check-input" type="checkbox" />
+              </th>
+              <th scope="col">Full Name</th>
+              <th scope="col">Display Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers %}
+              <tr>
+                <td>
+                  <input class="form-check-input" type="checkbox" />
+                </td>
+                <td>{{ customer.full_name }}</td>
+                <td>{{ customer.display_name }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>
+                  <a class="btn btn-sm btn-success" href="{% url 'view_customer' customer.id %}">View</a>
+                  <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal{{ customer.id }}">Delete</button>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination mt-4 w-100 d-flex justify-content-center">
+        <span class="step-links">
+          {% if customers.has_previous %}
+            <a href="?page=1" style="color: rgb(101, 141, 59);">&laquo; first</a>
+            <a href="?page={{ customers.previous_page_number }}" style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">previous</a>
+          {% endif %}
+
+          <span class="current">Page {{ customers.number }} of {{ customers.paginator.num_pages }}.</span>
+
+          {% if customers.has_next %}
+            <a href="?page={{ customers.next_page_number }}" style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">next</a>
+            <a href="?page={{ customers.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+  <!-- Recent Sales End -->
+
+  <!-- scripts for modal -->
+
+{% endblock %}

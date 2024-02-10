@@ -1,0 +1,119 @@
+{% extends 'admin/base.html' %}
+
+{% load static %}
+
+{% block title %}
+CHE.Home
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0">Customer Details</h2>
+            <a class="btn btn-success"
+                style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
+                href="{% url 'update_customer' customer.id %}">Edit Details</a>
+        </div>
+        <div class="table-responsive " style="border: 2px solid rgb(58, 82, 106);">
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>First Name : {{customer.first_name}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Last Name : {{customer.last_name}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Email : {{customer.email}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Display Name : {{customer.display_name}}</h6>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>Phone : {{customer.phone}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Active Status : {{customer.is_active}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Date Joined : {{customer.date_joined}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Full Name : {{customer.full_name}}</h6>
+                </div>
+            </div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+<!-- address details -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0">Address Details</h2>
+            <a class="btn btn-success"
+                style="margin-left: 20px; padding-left:15px; padding-right: 15px;"
+                href="{% url 'add_address' customer.id %}">Add Address</a>
+        </div>
+        {% for address in address_list %}
+        <div class="table-responsive " style="border: 2px solid rgb(58, 82, 106);">
+            <div class="d-flex justify-content-between m-3">
+                <p class="">Address line {{ forloop.counter }}</p>
+                <div>
+                    <a class="btn btn-danger" href="">Delete</a>
+                    <a class="btn btn-success"
+                        style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
+                        href="{% url 'update_address' address.id %}">Edit Address</a>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>Address Type : {{address.address_type}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Country : {{address.country}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>State : {{address.state}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>City : {{address.city}}</h6>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>Street 1 : {{address.street1}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Street 2 : {{address.street2}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Zipcode : {{address.zipcode}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Phone : {{address.phone}}</h6>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>Default Address : {{address.is_default}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Lanmark : {{address.lan_mark}}</h6>
+                </div>
+                <div class="w-25" style="text-align: left; visibility: hidden;">
+                    <h6></h6>
+                </div>
+                <div class="w-25" style="text-align: left; visibility: hidden;">
+                    <h6></h6>
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

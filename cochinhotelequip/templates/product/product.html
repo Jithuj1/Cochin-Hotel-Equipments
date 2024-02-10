@@ -1,0 +1,103 @@
+{% extends 'admin/base.html' %}
+
+{% load static %}
+
+{% block title %} CHE.Home {% endblock %}
+
+
+{% block content %}
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete customer {{ customer.full_name }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="deleteCustomer({{ customer.id }})">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of delete modal -->
+
+<!-- Recent Sales Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0">All Products</h6>
+            <form class="d-none d-md-flex ms-4" method="post" action="{% url 'product' %}">
+                {% csrf_token %}
+                <input class="form-control bg-dark border-0" name="search" type="search" placeholder="Search">
+                <button class="btn btn-success"
+                    style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
+            </form>
+            <a class="btn btn-success"
+                    style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);" 
+                    href="{% url 'new_product' %}">Add product</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table text-start align-middle table-bordered table-hover mb-0">
+                <thead>
+                    <tr class="text-white">
+                        <th scope="col"><input class="form-check-input" type="checkbox"></th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">HSN Code</th>
+                        <th scope="col">Category Name</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Tax %</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td><input class="form-check-input" type="checkbox"></td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.hsn_code }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.unit }}</td>
+                            <td>{{ product.tax_perc }}</td>
+                           
+                            <td>
+                                <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}">Edit</a>
+                                <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination mt-4 w-100 d-flex justify-content-center">
+            <span class="step-links">
+                {% if products.has_previous %}
+                <a href="?page=1" style="color: rgb(101, 141, 59);">&laquo; first</a>
+                <a href="?page={{ products.previous_page_number }}"
+                    style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ products.number }} of {{ products.paginator.num_pages }}.
+                </span>
+
+                {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}"
+                    style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">next</a>
+                <a href="?page={{ products.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+<!-- Recent Sales End -->
+
+
+{% endblock %}
