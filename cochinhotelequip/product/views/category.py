@@ -50,3 +50,19 @@ def add_category(request):
         Category.objects.create(name=category)
         return redirect('category')
         
+
+@login_required(login_url='login')
+def delete_category(request, category_id):
+    Category.objects.get(id=category_id).delete()
+    return redirect('category')
+
+
+@login_required(login_url='login')
+def update_category(request, category_id):
+    name = request.POST.get('category')
+    print(name)
+    category = Category.objects.get(id=category_id)
+    category.name = name
+    category.save()
+
+    return redirect('category')

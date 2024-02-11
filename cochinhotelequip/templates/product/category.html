@@ -10,13 +10,14 @@
     .hidden {
         display: none;
     }
-    .show{
+
+    .show {
         display: block;
     }
 </style>
 
 
- 
+
 
 
 <!-- Recent Sales Start -->
@@ -32,7 +33,7 @@
                         style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
                 </form>
             </div>
-    
+
             <div class="table-responsive">
                 <table class="table text-start align-middle table-bordered table-hover mb-0">
                     <thead>
@@ -44,40 +45,75 @@
                     </thead>
                     <tbody>
                         {% for category in category_list %}
-                            <tr>
-                                <td><input class="form-check-input" type="checkbox"></td>
-                                <td>{{ category.name }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success" id='updateModalBtn' style="margin-right: 15px;" data-toggle="modal" data-target="#deleteModal">Update</button>
-                                    <button class="btn btn-sm btn-danger" data-toggle="modal" id='deleteModalBtn' data-target="#deleteModal">Delete</button>
-                                </td>
-                            </tr>
-                                <!-- Delete Modal -->
-                                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header border-0">
-                                                <h5 class="" id="">Delete Category</h5>
-                                                
-                                            </div>
-                                            <div class="modal-body ">
-                                                <form>
-                                                    <label class='hidden hiddenContent'>Category Name</label>
-                                                    <input type='text'  class='hidden hiddenContent' value={{category.name}} required>
-                                                
-                                                <p class='deleteContent'>Are you sure you want to delete category {{ category.name }}?</p>
-                                            </div>
-                                            <div class="modal-footer border-0">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                <a href="" class="btn btn-danger deleteContent">Delete</a>
-                                                <button type='button' class='hidden hiddenContent' id='update'>Update</button>
-                                            </form>
-                                            </div>
+                        <tr>
+                            <td><input class="form-check-input" type="checkbox"></td>
+                            <td>{{ category.name }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-success" style="margin-right: 15px;" data-toggle="modal"
+                                    data-target="#updateModal{{ category.id }}">Update</button>
+                                <button class="btn btn-sm btn-danger" data-toggle="modal"
+                                    data-target="#deleteModal{{ category.id }}">Delete</button>
+                            </td>
+                        </tr>
+
+                        <!-- Update Modal -->
+                        <div class="modal fade" id="updateModal{{ category.id }}" tabindex="-1" role="dialog"
+                            aria-labelledby="updateModalLabel{{ category.id }}" aria-hidden="true">
+                            <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
+                                role="document">
+                                <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title" id="updateModalLabel">Update Category Name</h5>
+                                    </div>
+
+                                    <!-- Form starts here -->
+                                    <form method="post" action="{% url 'update_category' category.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body d-flex w-100 align-items-center justify-content-center">
+                                            <input class="form-control bg-dark border-0 w-75" name="category"
+                                                type="search" value="{{ category.name }}" placeholder="Category Name">
                                         </div>
+
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-success">Update</button>
+                                        </div>
+                                    </form>
+                                    <!-- Form ends here -->
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- end of update modal -->
+
+                        <!-- delete modal -->
+                        <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1" role="dialog"
+                            aria-labelledby="deleteModalLabel{{ category.id }}" aria-hidden="true">
+                            <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
+                                role="document">
+                                <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                                    <div class="modal-header border-0">
+                                        <h5 class="modal-title" id="deleteModalLabel">Delete Category</h5>
+
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>If you delete this product, it will effect connected invoice</p>
+                                        <p>It will shows blank products in connected invoice</p>
+                                        <p>Are you sure you want to delete product "{{category.name}}" ?</p>
+                                    </div>
+                                    <div class="modal-footer border-0">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Cancel</button>
+                                        <a href="{% url 'delete_category' category.id %}"
+                                            class="btn btn-danger">Delete</a>
                                     </div>
                                 </div>
-                                <!-- end of delete modal -->
-                           
+                            </div>
+                        </div>
+                        <!-- end of delete modal -->
+
                         {% endfor %}
                     </tbody>
                 </table>
@@ -89,15 +125,16 @@
                     <a href="?page={{ category_list.previous_page_number }}"
                         style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">previous</a>
                     {% endif %}
-    
+
                     <span class="current">
                         Page {{ category_list.number }} of {{ category_list.paginator.num_pages }}.
                     </span>
-    
+
                     {% if category_list.has_next %}
                     <a href="?page={{ category_list.next_page_number }}"
                         style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">next</a>
-                    <a href="?page={{ category_list.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last &raquo;</a>
+                    <a href="?page={{ category_list.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last
+                        &raquo;</a>
                     {% endif %}
                 </span>
             </div>
@@ -108,63 +145,20 @@
                 {% if messages %}
                 <div class="alert alert-danger" role="alert">
                     {% for message in messages %}
-                        {{ message }}
+                    {{ message }}
                     {% endfor %}
                 </div>
                 {% endif %}
                 <input class="form-control bg-dark border-0" name="category" type="search" placeholder="Category Name">
                 <button class="btn btn-success"
-                    style="margin-left: 20px; margin-top: 10px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);">Add Catogry</button>
+                    style="margin-left: 20px; margin-top: 10px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);">Add
+                    Catogry</button>
             </form>
         </div>
-        
+
     </div>
 </div>
 <!-- Recent Sales End -->
-
-<script>
-    // Get the update button element
-    let updateBtn = document.getElementById("update")
-
-    // Get the delete modal button element
-    let deleteModalBtn = document.getElementById('deleteModalBtn')
-
-    let updateModalBtn = document.getElementById('updateModalBtn')
-
-    // Get all the delete content elements
-    let deleteContent = document.getElementsByClassName('deleteContent')
-
-    // Get all the hidden content elements
-    let hiddenContent = document.getElementsByClassName('hiddenContent')
-   
-    // Add an event listener to the update modal button
-    updateModalBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-
-        // Hide all delete content elements
-        for(let i=0; i < deleteContent.length; i++){
-            deleteContent[i].style.display = "none"
-        }
-
-        // Show all hidden content elements
-        for(let i=0; i < hiddenContent.length; i++){
-            hiddenContent[i].style.display = "block"
-        }
-        
-       
-    })
-   
-    deleteModalBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        for(let i=0; i < hiddenContent.length; i++){
-            hiddenContent[i].style.display = "none"
-        }
-        for(let i=0; i < deleteContent.length; i++){
-            deleteContent[i].style.display = "block"
-        }
-    })
-
-</script>
 
 
 {% endblock %}

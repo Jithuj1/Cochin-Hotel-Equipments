@@ -101,8 +101,9 @@ def add_product(request):
             return redirect('new_product')
     
 
+@login_required(login_url='login')
 def delete_product(request, product_id):
-    product = Product.objects.get(id=product_id).delete()
+    Product.objects.get(id=product_id).delete()
     return redirect('product')
 
 
