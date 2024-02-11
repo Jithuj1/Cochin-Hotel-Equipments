@@ -52,6 +52,7 @@ def add_product(request):
         Is_taxable = request.POST.get('Is_taxable')
         tax_perc = request.POST.get('tax_perc')
         unit = request.POST.get('unit')
+        price = request.POST.get('price')
         category = request.POST.get('category')
         remarks = request.POST.get('remarks')
 
@@ -67,6 +68,16 @@ def add_product(request):
             except ValueError:
                 messages.error(request, "please enter a numerical value for tax ")
                 return redirect('new_product')
+            
+        try:
+            int_value = int(price)
+        except ValueError:
+            try:
+                float_value = float(price)
+                price = "{:.2f}".format(float_value)
+            except ValueError:
+                messages.error(request, "please enter a numerical value for price ")
+                return redirect('new_product')
         
         category_obj = Category.objects.filter(id=category).first()
         if not category_obj:
@@ -77,6 +88,7 @@ def add_product(request):
                 name = product_name,
                 hsn_code = hsn_code,
                 unit = unit,
+                price = price,
                 category = category_obj,
                 tax_perc = tax_perc,
                 remark = remarks,
@@ -89,8 +101,9 @@ def add_product(request):
             return redirect('new_product')
     
 
-def delete_product(request, customer_id):
-    return redirect('customer')
+def delete_product(request, product_id):
+    product = Product.objects.get(id=product_id).delete()
+    return redirect('product')
 
 
 @login_required(login_url='login')
@@ -114,8 +127,10 @@ def update_product(request, product_id):
         tax_perc = request.POST.get('tax_perc')
         category = request.POST.get('category')
         remarks = request.POST.get('remarks')
+        price = request.POST.get('price')
 
-        if any(value is not None and value.isspace() for value in [product_name, hsn_code, tax_perc, category, remarks]):
+        if any(value is not None and value.isspace() 
+               for value in [product_name, hsn_code, tax_perc, category, remarks, price]):
             messages.error(request, "Input cannot be blank or None")
             url = reverse('update_product', kwargs={'product_id': product_id})
             return redirect(url)
@@ -131,14 +146,27 @@ def update_product(request, product_id):
                     messages.error(request, "please enter a numerical value for tax ")
                     url = reverse('update_product', kwargs={'product_id': product_id})
                     return redirect(url)
+                
+        if price:
+            try:
+                int_value = int(price)
+            except ValueError:
+                try:
+                    float_value = float(price)
+                    price = "{:.2f}".format(float_value)
+                except ValueError:
+                    messages.error(request, "please enter a numerical value for price ")
+                    url = reverse('update_product', kwargs={'product_id': product_id})
+                    return redirect(url)
             
         new_category = Category.objects.get(id=category)
 
         product.name = product_name if product_name !="" else product.name
         product.hsn_code = hsn_code if hsn_code !="" else product.hsn_code
         product.tax_perc = tax_perc if tax_perc !="" else product.tax_perc
-        product.category = new_category
+        product.price = price if price !="" else product.price
         product.remark = remarks if remarks !="" else product.remark
+        product.category = new_category
 
         product.save()
 

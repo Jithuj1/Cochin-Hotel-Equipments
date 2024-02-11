@@ -54,20 +54,24 @@
                         </div>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
-                        <div class="form-floating mb-3" style="width: 50%; display: flex;">
+                        <div class="form-floating mb-3" style="width: 25%; display: flex;">
                             <div class="bg-dark"
                                 style=" width: 60%; display: flex; align-items: center; justify-content: center;">Select Unit</div>
                             <div>
                                 <select name="unit" class="form-select" id="gstCustomerSelect"
                                     aria-label="Select GST Customer" style="text-align: right; height: 100%;">
-                                    <option value="PIECE">Default</option>
                                     {% for unit in units%}
                                     <option value="{{unit}}">{{unit}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
-                        <div class="form-floating mb-3" style="width: 50%; display: flex;">
+                        <div class="form-floating mb-3" style="width: 30%;">
+                            <input name="price" type="text" class="form-control" id="floatingInput"
+                                placeholder="name@example.com">
+                            <label for="floatingInput">Price</label>
+                        </div>
+                        <div class="form-floating mb-3" style="width: 40%; display: flex;">
                             <div class="bg-dark p-3"
                                 style=" width: 60%; display: flex; align-items: center; justify-content: center;">Select Category</div>
                             <div>
