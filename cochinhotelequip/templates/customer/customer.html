@@ -8,7 +8,6 @@
 
 {% block content %}
   
-  <!-- Recent Sales Start -->
   <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
       <div class="d-flex align-items-center justify-content-between mb-4">
@@ -52,10 +51,10 @@
 
               <!-- Delete Modal -->
                 <div class="modal fade" id="deleteModal{{ customer.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                      <div class="modal-content">
+                  <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
+                      <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                           <div class="modal-header border-0">
-                              <h5 class="modal-title" id="deleteModalLabel">Delete Customer</h5>
+                              <h5 class="modal-title" style="color: black;" id="deleteModalLabel">Delete Customer</h5>
                               
                           </div>
                           <div class="modal-body">
@@ -63,7 +62,7 @@
                           </div>
                           <div class="modal-footer border-0">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <a href="" class="btn btn-danger">Yes, Delete</a>
+                              <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger">Yes, Delete</a>
                           </div>
                       </div>
                   </div>

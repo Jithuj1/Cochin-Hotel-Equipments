@@ -9,4 +9,5 @@ urlpatterns = [
     path('add_address/<int:customer_id>', add_address, name='add_address'),
     path('update_customer/<int:customer_id>', update_customer, name='update_customer'),
     path('update_address/<int:address_id>', update_address, name='update_address'),
+    path('delete_address/<int:address_id>', delete_address, name='delete_address'),
 ]
