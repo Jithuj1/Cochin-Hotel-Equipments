@@ -7,6 +7,29 @@ CHE.Home
 {% endblock %}
 
 {% block content %}
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <h5 class="" id="">Delete Category</h5>
+            <div class="modal-header border-0">
+                
+            </div>
+            <div class="modal-body ">
+                
+                <p>Are you sure you want to delete customer {{ customer.first_name }}?</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a href="" class="btn btn-danger">Delete</a>
+                
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of delete modal -->
+
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -63,7 +86,7 @@ CHE.Home
             <div class="d-flex justify-content-between m-3">
                 <p class="">Address line {{ forloop.counter }}</p>
                 <div>
-                    <a class="btn btn-danger" href="">Delete</a>
+                    <a class="btn btn-danger" href="" data-toggle="modal" data-target="#deleteModal">Delete</a>
                     <a class="btn btn-success"
                         style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
                         href="{% url 'update_address' address.id %}">Edit Address</a>
