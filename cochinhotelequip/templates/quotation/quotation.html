@@ -7,29 +7,6 @@
 
 {% block content %}
 
-<!-- add quatation customer select modal -->
-<div class="modal fade" id="selectCustomerModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
-        <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="selectCustomerModalLabel">Select Customer</h5>
-
-            </div>
-            <div class="modal-body">
-                <p>If you delete this product, it will effect connected invoice</p>
-                <p>It will shows blank products in connected invoice</p>
-                <p>Are you sure you want to delete product "{{ product.name }}" ?</p>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger">Delete</a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end of add quotation -->
-
 
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
@@ -44,7 +21,7 @@
             </form>
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                data-toggle="modal" data-target="#selectCustomerModal">Add New Quotation</a>
+                href="{% url 'select_customer' %}">Add New Quotation</a>
         </div>
         <div class="table-responsive">
             <table class="table text-start align-middle table-bordered table-hover mb-0">
