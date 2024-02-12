@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'product',
     'admin_side',
     "customer",
+    "invoice",
+    "quotation",
 ]
 
 MIDDLEWARE = [
