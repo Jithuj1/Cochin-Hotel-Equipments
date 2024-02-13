@@ -74,7 +74,7 @@ def generate_quotation(request, customer_id):
     primary_address = address[0]
 
     if request.method == 'GET':
-        product = Product.objects.all().order_by('-created_at')
+        products = Product.objects.all().order_by('-created_at')
     else:
         search = request.POST.get('search')
         q_object = Q()
@@ -82,20 +82,20 @@ def generate_quotation(request, customer_id):
         # q_object.add(Q(last_name__icontains=search), Q.OR)
         # q_object.add(Q(phone__icontains=search), Q.OR)
 
-        product = Product.objects.filter(q_object).order_by('-created_at')
+        products = Product.objects.filter(q_object).order_by('-created_at')
     
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(product, 2)
+    paginator = Paginator(products, 2)
     try:
-        product = paginator.page(page)
+        products = paginator.page(page)
     except PageNotAnInteger:
-        product = paginator.page(1)
+        products = paginator.page(1)
     except EmptyPage:
-        product = paginator.page(paginator.num_pages)
+        products = paginator.page(paginator.num_pages)
 
     context = {
-        "product": product, 
+        "products": products, 
         "active_page":"quotation",
         "customer":customer,
         "address":address,
