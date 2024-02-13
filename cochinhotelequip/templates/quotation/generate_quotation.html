@@ -9,54 +9,56 @@
 
 <div class="container-fluid pt-4 px-4 d-flex">
     <div class="bg-secondary d-flex w-100">
-        <div style="width: 60%;">
+        <div class='col-md-7'>
             <div class="container-fluid px-4">
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6 w-100">
                         <div class="bg-secondary rounded h-100 p-4">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h6 class="mb-4">Quotation Products</h6>
-                                <div class="form-floating mb-3" style="width: 50%; display: flex;">
-                                    <div class="bg-dark"
-                                        style=" width: 60%; display: flex; align-items: center; justify-content: center;">Select Product</div>
-                                    <div>
-                                        <select name="unit" class="form-select" id="gstCustomerSelect"
-                                            aria-label="Select GST Customer" style="text-align: right; height: 100%;">
+                                <div class="form-floating mb-3">
+                                    <form method='post'>
+                                    <div class="input-group mb-3">
+                                        
+                                             {% csrf_token %}
+                                        <select name="unit" class="custom-select form-select" id="inputGroupSelect01" style="text-align: right;width:12vw">
+                                            <option value='' selected>Choose...</option>
                                             {% for product in products%}
                                             <option value="{{product.id}}">{{product.name}}</option>
                                             {% endfor %}
-                                        </select>
+                                          </select>
+                                          <div class="input-group-append">
+                                            <button class="btn btn-success" type="submit">Add   </button>
+                                          </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">First Name</th>
-                                        <th scope="col">Last Name</th>
-                                        <th scope="col">Email</th>
+                                        <th scope="col">#</th> 
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Action</th>
+
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for  item in quotation_products %} 
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td>John</td>
-                                        <td>Doe</td>
-                                        <td>jhon@email.com</td>
+                                        <td> {{item.id}}</td>
+                                        <td> {{item.product.name }}</td>
+                                        <td>1</td>
+                                        <td>{{item.product.price}}</td>
+                                        <td>
+                                         <a href="{% url 'delete_quotation_product' item.id %}" class="btn btn-danger" >Delete</a>
+                                        </td>
+
                                     </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>mark@email.com</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>jacob@email.com</td>
-                                    </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -65,13 +67,21 @@
             </div>
         </div>
         <!-- right side for cusotmer details and invoice -->
-        <div class="w-25">
+        <div class="col-md-5">
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6 w-100">
                         <div class="bg-secondary rounded h-100 p-4">
                             <h6 class="mb-4">Customer details and invoice</h6>
-
+                                <h6>{{customer.display_name}}</h6>
+                                <details>
+                                    <summary class="fw-bold fs-base text-muted mb-2">Address Details</summary>
+                                    <p>{{primary_address.street1}}<br/>
+                                    {{primary_address.street2}}<br/>    
+                                    {{primary_address.city}},
+                                    {{primary_address.state}}, {{primary_address.country}} {{primary_address.zipcode}}<br/>
+                                    {{primary_address.phone}}</p>
+                                </details>
                         </div>
                     </div>
                 </div>

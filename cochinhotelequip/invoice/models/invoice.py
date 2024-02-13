@@ -25,3 +25,4 @@ class InvoiceItem(BaseModel):
     sgst = models.FloatField(null=True)
     cgst = models.FloatField(null=True)
     total_gst = models.FloatField(null=True)
+    is_active = models.BooleanField(default=False)

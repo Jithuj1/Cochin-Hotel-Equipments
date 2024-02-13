@@ -83,7 +83,7 @@ class User(AbstractBaseUser,):
     REQUIRED_FIELDS = ["first_name"]
 
     def __str__(self):
-        return self.username
+        return self.username or self.display_name
 
     @property
     def full_name(self):

@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from invoice.models.invoice import Invoice
+from invoice.models.invoice import Invoice, InvoiceItem
 from django.db.models import Q
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import re
+from django.shortcuts import get_object_or_404
 from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
@@ -71,34 +72,73 @@ def select_customer(request):
 def generate_quotation(request, customer_id):
     customer = User.objects.get(id=customer_id)
     address = Address.objects.filter(customer=customer).order_by('is_default')
-    primary_address = address[0]
-
+    primary_address = address.first()
     if request.method == 'GET':
         products = Product.objects.all().order_by('-created_at')
-    else:
-        search = request.POST.get('search')
-        q_object = Q()
+        invoice = Invoice.objects.create(customer=customer,discount=9.0,amount_paid=0,amount_remaining=0,grand_total=0)
+    
+       
+
+    
+        # products = Product.objects.filter(q_object).order_by('-created_at')
+        return redirect('add_invoice_item', invoice.id, customer.id)
+        # quotation_products = InvoiceItem.objects.filter(invoice=invoice).order_by('-created_at')
         # q_object.add(Q(first_name__icontains=search), Q.OR)
         # q_object.add(Q(last_name__icontains=search), Q.OR)
         # q_object.add(Q(phone__icontains=search), Q.OR)
 
-        products = Product.objects.filter(q_object).order_by('-created_at')
-    
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(products, 2)
-    try:
-        products = paginator.page(page)
-    except PageNotAnInteger:
-        products = paginator.page(1)
-    except EmptyPage:
-        products = paginator.page(paginator.num_pages)
+        # paginator = Paginator(products, 3)
+        # try:
+        #     products = paginator.page(page)
+        # except PageNotAnInteger:
+        #     products = paginator.page(1)
+        # except EmptyPage:
+        #     products = paginator.page(paginator.num_pages)
 
     context = {
         "products": products, 
-        "active_page":"quotation",
-        "customer":customer,
-        "address":address,
-        "primary_address":primary_address
+        "active_page": "quotation",
+        "customer": customer,
+        "address": address,
+        "primary_address": primary_address,
+        # "quotation_products": quotation_products if quotation_products else None,
+        }
+    print(primary_address.city)
+    return render(request, 'quotation/generate_quotation.html', context)
+
+@login_required(login_url='login')
+def delete_quotation_product(request, item_id):
+    invoice_item = InvoiceItem.objects.get(id=item_id)
+    invoice_id = invoice_item.invoice.id
+    customer_id = invoice_item.invoice.customer.id
+    invoice_item.delete()
+    return redirect('add_invoice_item', invoice_id, customer_id)
+    
+@login_required(login_url='login')
+def add_invoice_item(request, invoice_id, customer_id):
+    customer = User.objects.get(id=customer_id)
+    address = Address.objects.filter(customer=customer).order_by('is_default')
+    primary_address = address.first()
+    products = Product.objects.all().order_by('-created_at')
+    quotation_products = InvoiceItem.objects.filter(invoice=invoice_id).order_by('-created_at')
+    if request.method == 'POST':
+    
+        unit = request.POST.get('unit')
+        if not unit:
+            messages.error(request, 'Please choose a product.')
+            return redirect('add_invoice_item', invoice_id, customer_id)
+            
+        invoice = get_object_or_404(Invoice, pk=invoice_id)
+        invoice_item = InvoiceItem(product=Product.objects.get(id=unit), invoice=invoice)
+        invoice_item.save()
+    context = {
+        "products": products, 
+        "active_page": "quotation",
+        "customer": customer,
+        "address": address,
+        "primary_address": primary_address,
+        "quotation_products": quotation_products if quotation_products else None,
         }
     return render(request, 'quotation/generate_quotation.html', context)
