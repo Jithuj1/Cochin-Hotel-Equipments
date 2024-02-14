@@ -106,3 +106,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_AGE = 86400
+
+# store details 
+STORE_ADDRESS = {"state": "Kerala", "country": "India"}
