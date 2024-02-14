@@ -48,16 +48,22 @@
                                 </thead>
                                 <tbody>
                                     {% for  item in quotation_products %} 
+                                    <form method='post' action="{% url 'edit_invoice_item' item.id invoice_id customer.id %}">
+                                        {% csrf_token %}
                                     <tr>
                                         <td> {{item.id}}</td>
                                         <td> {{item.product.name }}</td>
-                                        <td>1</td>
-                                        <td>{{item.product.price}}</td>
+                                        <td><input type='text' size=2 value='1' name='quantity'></td>
+                                        <td><input type='text'size=5 value='{{item.product.price}}' name='price'></td>
                                         <td>
-                                         <a href="{% url 'delete_quotation_product' item.id %}" class="btn btn-danger" >Delete</a>
+                                         <a href="{% url 'delete_quotation_product' item.id %}" data-toggle="tooltip" data-placement="top" title="Delete" class="btn btn-danger" > <span aria-hidden="true">&times;</span></a>
+                                         <button class='btn btn-success' type='submit' data-toggle="tooltip" data-placement="top" title="Save changes"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                                            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                                          </svg></button>
                                         </td>
 
                                     </tr>
+                                </form>
                                     {% endfor %}
                                 </tbody>
                             </table>

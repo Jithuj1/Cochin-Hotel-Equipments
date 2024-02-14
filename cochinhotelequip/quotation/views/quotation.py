@@ -139,6 +139,18 @@ def add_invoice_item(request, invoice_id, customer_id):
         "customer": customer,
         "address": address,
         "primary_address": primary_address,
+        'invoice_id': invoice_id,
         "quotation_products": quotation_products if quotation_products else None,
         }
     return render(request, 'quotation/generate_quotation.html', context)
+
+
+def edit_quotation_item(request, item_id, invoice_id, customer_id):
+    if request.method == 'POST':
+        quantity = request.POST.get('quantity')
+        price = request.POST.get('price')
+        
+        invoice_item = InvoiceItem.objects.get(id=item_id)
+       
+
+        return redirect('add_invoice_item',  invoice_id, customer_id)
