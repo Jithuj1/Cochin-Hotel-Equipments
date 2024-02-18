@@ -7,17 +7,26 @@ from account.models.address import Address
 from invoice.utils.gst_calculater import calculate_gst
 from invoice.utils.financial_year import fiscal_year_4digit
 
+
+class StoreNames(Enum):
+        ERNAKULAM = "ERNAKULAM"
+        THRISSUR = "THRISSUR"
+
+
 class Invoice(BaseModel):
 
     quotation_date = models.DateField(auto_now_add=True)
     invoice_date = models.DateField(null=True)
     customer = models.ForeignKey("account.User", on_delete=models.PROTECT)
+    address = models.ForeignKey("account.Address", on_delete=models.PROTECT)
+    store = models.CharField(choices=[(options.name, options.value) for options in StoreNames], max_length=20)
     is_active = models.BooleanField(default=True)
     is_quotation = models.BooleanField(default=True)
     discount = models.FloatField(default=0)
-    amount_paid = models.FloatField()
-    amount_remaining = models.FloatField()
-    grand_total = models.FloatField()
+    amount_paid = models.FloatField(null=True)
+    amount_remaining = models.FloatField(null=True)
+    sub_total = models.FloatField(default=0)
+    grand_total = models.FloatField(default=0)
     tax_igst_total = models.FloatField(default=0)
     tax_sgst_total = models.FloatField(default=0)
     tax_cgst_total = models.FloatField(default=0)
@@ -29,11 +38,11 @@ class Invoice(BaseModel):
         constraints = [
             models.UniqueConstraint(
                 fields=["invoice_num_seq", "invoice_num_fiscalyr"],
-                name="unique_fiscalyr_seq_num",
+                name="invoice_unique_fiscalyr_seq_num",
             ),
             models.UniqueConstraint(
                 fields=["quotation_num_seq", "invoice_num_fiscalyr"],
-                name="unique_fiscalyr_seq_num",
+                name="quotation_unique_fiscalyr_seq_num",
             )
         ]
 
@@ -143,10 +152,10 @@ class InvoiceItem(BaseModel):
             billing_country
             )
         
-        self.igst = igst
-        self.sgst = sgst
-        self.cgst = cgst
-        self.total_gst = igst + sgst + cgst
+        self.igst = igst * self.qty
+        self.sgst = sgst * self.qty
+        self.cgst = cgst * self.qty
+        self.total_gst = igst * self.qty + sgst * self.qty + cgst * self.qty
         self.sub_total = self.rate * self.qty
         self.grand_item_total = self.total_gst + (self.rate * self.qty)
         self.save()

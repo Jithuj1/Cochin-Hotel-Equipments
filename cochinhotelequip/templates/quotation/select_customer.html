@@ -3,74 +3,110 @@
 {% load static %}
 
 {% block title %}
-  CHE.Customer
+CHE.Customer
 {% endblock %}
 
 {% block content %}
-  
-  <div class="container-fluid pt-4 px-4">
-    <div class="bg-secondary text-center rounded p-4">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <h6 class="mb-0">Select a customer for generating quotation</h6>
-        <form class="d-none d-md-flex ms-4" method="post" action="{% url 'select_customer' %}">
-          {% csrf_token %}
-          <input class="form-control bg-dark border-0" name="search" type="search" placeholder="Search" />
-          <button class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
-        </form>
-      </div>
-      <div class="table-responsive">
-        <table class="table text-start align-middle table-bordered table-hover mb-0">
-          <thead>
-            <tr class="text-white">
-              <th scope="col">
-                <input class="form-check-input" type="checkbox" />
-              </th>
-              <th scope="col">Full Name</th>
-              <th scope="col">Display Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for customer in customers %}
-              <tr>
-                <td>
-                  <input class="form-check-input" type="checkbox" />
-                </td>
-                <td>{{ customer.full_name }}</td>
-                <td>{{ customer.display_name }}</td>
-                <td>{{ customer.email }}</td>
-                <td>{{ customer.phone }}</td>
-                <td>
-                  <a class="btn btn-sm btn-success" href="{% url 'generate_quotation' customer.id %}">Generate Quotation</a>
-                </td>
-              </tr>
 
+<div class="container-fluid pt-4 px-4">
+  <div class="bg-secondary text-center rounded p-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h6 class="mb-0">Select a customer for generating quotation</h6>
+      <form class="d-none d-md-flex ms-4" method="post" action="{% url 'select_customer' %}">
+        {% csrf_token %}
+        <input class="form-control bg-dark border-0" name="search" type="search" placeholder="Search" />
+        <button class="btn btn-success"
+          style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
+      </form>
+    </div>
+    <div class="table-responsive">
+      <table class="table text-start align-middle table-bordered table-hover mb-0" style="font-size: 14px;">
+        <thead>
+          <tr class="text-white">
+            <th scope="col">
+              <input class="form-check-input" type="checkbox" />
+            </th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Display Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for customer in customers %}
+          <tr>
+            <td>
+              <input class="form-check-input" type="checkbox" />
+            </td>
+            <td>{{ customer.full_name }}</td>
+            <td>{{ customer.display_name }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.phone }}</td>
+            <td>
+              <button class="btn btn-sm btn-success" data-toggle="modal"
+                data-target="#selectStoreModal{{ customer.id }}">Generate
+                Quotation</button>
+            </td>
+          </tr>
 
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="pagination mt-4 w-100 d-flex justify-content-center">
-        <span class="step-links">
-          {% if customers.has_previous %}
-            <a href="?page=1" style="color: rgb(101, 141, 59);">&laquo; first</a>
-            <a href="?page={{ customers.previous_page_number }}" style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">previous</a>
-          {% endif %}
+          <!-- select store modal -->
+          <div class="modal fade" id="selectStoreModal{{ customer.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="selectStoreModalLabel{{ customer.id }}" aria-hidden="true">
+            <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
+              <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title" id="selectStoreModalLabel">Select Store</h5>
+                </div>
 
-          <span class="current">Page {{ customers.number }} of {{ customers.paginator.num_pages }}.</span>
+                <!-- Form starts here -->
+                <form method="post" action="{% url 'generate_quotation' customer.id %}">
+                  {% csrf_token %}
+                  <div class="mx-5">
+                    <select name="store" class="form-select" id="gstCustomerSelect" aria-label="Select GST Customer"
+                      style="text-align: right; height: 100%;">
+                      {% for store in store_names%}
+                      <option value="{{store}}">{{store}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
 
-          {% if customers.has_next %}
-            <a href="?page={{ customers.next_page_number }}" style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">next</a>
-            <a href="?page={{ customers.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last &raquo;</a>
-          {% endif %}
-        </span>
-      </div>
+                  <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Continue</button>
+                  </div>
+                </form>
+                <!-- Form ends here -->
+
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination mt-4 w-100 d-flex justify-content-center">
+      <span class="step-links">
+        {% if customers.has_previous %}
+        <a href="?page=1" style="color: rgb(101, 141, 59);">&laquo; first</a>
+        <a href="?page={{ customers.previous_page_number }}"
+          style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">previous</a>
+        {% endif %}
+
+        <span class="current">Page {{ customers.number }} of {{ customers.paginator.num_pages }}.</span>
+
+        {% if customers.has_next %}
+        <a href="?page={{ customers.next_page_number }}"
+          style="margin-right: 5px; margin-left: 5px; color: rgb(101, 141, 59);">next</a>
+        <a href="?page={{ customers.paginator.num_pages }}" style="color: rgb(101, 141, 59);">last &raquo;</a>
+        {% endif %}
+      </span>
     </div>
   </div>
-  <!-- Recent Sales End -->
+</div>
+<!-- Recent Sales End -->
 
-  <!-- scripts for modal -->
+<!-- scripts for modal -->
 
 {% endblock %}

@@ -5,22 +5,24 @@ from product.models.product import Product, Category, UnitTypes
 from django.db.models import Q
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.db.models import Count
 import re
 
 
 @login_required(login_url='login')
 def category(request):
     if request.method == 'GET':
-        category_list = Category.objects.all()
+        category_list = Category.objects.all().order_by('-created_at')
 
     else:
         search = request.POST.get('search')
         q_object = Q()
         q_object.add(Q(name__icontains=search), Q.OR)
 
-        category_list = Category.objects.filter(q_object)
+        category_list = Category.objects.filter(q_object).order_by('-created_at')
     
+    category_list = category_list.annotate(product_count=Count('product'))
+
     page = request.GET.get('page', 1)
 
     paginator = Paginator(category_list, 2)
