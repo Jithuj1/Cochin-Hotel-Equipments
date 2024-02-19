@@ -140,6 +140,8 @@ def add_quotation_item(request, quotation_id, customer_id):
 
         quotation_item.calculate_item_totals(primary_address.state, primary_address.country)
         quotation_item.invoice.calculate_total()
+        return redirect('add_quotation_item', quotation_id, customer_id)
+ 
 
     quotation = Invoice.objects.get(id=quotation_id)
 
