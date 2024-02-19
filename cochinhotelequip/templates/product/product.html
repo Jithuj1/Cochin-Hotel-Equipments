@@ -20,11 +20,11 @@
                     style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
             </form>
             <a class="btn btn-success"
-                    style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);" 
-                    href="{% url 'new_product' %}">Add product</a>
+                style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
+                href="{% url 'new_product' %}">Add product</a>
         </div>
         <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+            <table class="table text-start align-middle table-bordered table-hover mb-0" style="font-size: 14px;">
                 <thead>
                     <tr class="text-white">
                         <th scope="col">No</th>
@@ -39,42 +39,46 @@
                 </thead>
                 <tbody>
                     {% for product in products %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.category.name }}</td>
-                            <td>{{ product.hsn_code }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.unit }}</td>
-                            <td>{{ product.tax_perc }}</td>
-                           
-                            <td>
-                                <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}">Edit</a>
-                                <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.hsn_code }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.unit }}</td>
+                        <td>{{ product.tax_perc }}</td>
 
-                        <!-- Delete Modal -->
-                            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
-                                    <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
-                                        <div class="modal-header border-0">
-                                            <h5 class="modal-title" id="deleteModalLabel">Delete Product</h5>
-                                            
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>If you delete this product, it will effect connected invoice</p>
-                                            <p>It will shows blank products in connected invoice</p>
-                                            <p>Are you sure you want to delete product "{{ product.name }}" ?</p>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                            <a href="{% url 'delete_product' product.id %}" class="btn btn-danger" >Delete</a>
-                                        </div>
-                                    </div>
+                        <td>
+                            <button class="btn btn-sm btn-danger" style="margin-right: 15px;" data-toggle="modal"
+                                data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+                            <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}"><i
+                                    class="fas fa-edit"></i></a>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
+                            role="document">
+                            <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete Product</h5>
+
+                                </div>
+                                <div class="modal-body">
+                                    <p>If you delete this product, it will effect connected invoice</p>
+                                    <p>It will shows blank products in connected invoice</p>
+                                    <p>Are you sure you want to delete product "{{ product.name }}" ?</p>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
                                 </div>
                             </div>
-                        <!-- end of delete modal -->
+                        </div>
+                    </div>
+                    <!-- end of delete modal -->
 
                     {% endfor %}
                 </tbody>

@@ -7,7 +7,6 @@ CHE.Home
 {% endblock %}
 
 {% block content %}
-
 <!-- error message -->
 {% if messages %}
 <!-- Modal -->
@@ -42,35 +41,35 @@ CHE.Home
             <h2 class="mb-0">Customer Details</h2>
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                href="{% url 'update_customer' customer.id %}">Edit Details</a>
+                href="{% url 'update_customer' customer.id %}"><i class="fa fa-user-edit me-2" style="margin-right: 10px;"></i>Edit Details</a>
         </div>
-        <div class="table-responsive " style="border: 2px solid rgb(58, 82, 106);">
+        <div class="table-responsive" style="border: 2px solid rgb(58, 82, 106);">
             <div class="d-flex justify-content-around m-4">
                 <div class="w-25" style="text-align: left;">
-                    <h6>First Name : {{customer.first_name}}</h6>
+                    <h6>First Name : {{ customer.first_name }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Last Name : {{customer.last_name}}</h6>
+                    <h6>Last Name : {{ customer.last_name }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Email : {{customer.email}}</h6>
+                    <h6>Email : {{ customer.email }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Display Name : {{customer.display_name}}</h6>
+                    <h6>Display Name : {{ customer.display_name }}</h6>
                 </div>
             </div>
             <div class="d-flex justify-content-around m-4">
                 <div class="w-25" style="text-align: left;">
-                    <h6>Phone : {{customer.phone}}</h6>
+                    <h6>Phone : {{ customer.phone }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Active Status : {{customer.is_active}}</h6>
+                    <h6>Active Status : {{ customer.is_active }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Date Joined : {{customer.date_joined}}</h6>
+                    <h6>Date Joined : {{ customer.date_joined }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Full Name : {{customer.full_name}}</h6>
+                    <h6>Full Name : {{ customer.full_name }}</h6>
                 </div>
             </div>
             <div></div>
@@ -83,54 +82,56 @@ CHE.Home
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h2 class="mb-0">Address Details</h2>
-            <a class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px;"
-                href="{% url 'add_address' customer.id %}">Add Address</a>
+            <a class="btn btn-light"
+                style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
+                href="{% url 'add_address' customer.id %}"><i class="fas fa-address-card"
+                    style="margin-right: 10px;"></i>Add Address</a>
         </div>
         {% for address in address_list %}
-        <div class="table-responsive " style="border: 2px solid rgb(58, 82, 106);">
+        <div class="table-responsive" style="border: 2px solid rgb(58, 82, 106);">
             <div class="d-flex justify-content-between m-3">
                 <p class="">Address line {{ forloop.counter }}</p>
                 <div>
-                    <a class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</a>
-                    <a class="btn btn-success"
-                        style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                        href="{% url 'update_address' address.id %}">Edit Address</a>
+                    <a class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"><i
+                            class="fas fa-trash-alt"></i></a>
+                    <a class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px;
+              href=" {% url 'update_address' address.id %}"><i class="fas fa-edit"></i></a>
                 </div>
             </div>
             <div class="d-flex justify-content-around m-4">
                 <div class="w-25" style="text-align: left;">
-                    <h6>Address Type : {{address.address_type}}</h6>
+                    <h6>Address Type : {{ address.address_type }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Country : {{address.country}}</h6>
+                    <h6>Country : {{ address.country }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>State : {{address.state}}</h6>
+                    <h6>State : {{ address.state }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>City : {{address.city}}</h6>
-                </div>
-            </div>
-            <div class="d-flex justify-content-around m-4">
-                <div class="w-25" style="text-align: left;">
-                    <h6>Street 1 : {{address.street1}}</h6>
-                </div>
-                <div class="w-25" style="text-align: left;">
-                    <h6>Street 2 : {{address.street2}}</h6>
-                </div>
-                <div class="w-25" style="text-align: left;">
-                    <h6>Zipcode : {{address.zipcode}}</h6>
-                </div>
-                <div class="w-25" style="text-align: left;">
-                    <h6>Phone : {{address.phone}}</h6>
+                    <h6>City : {{ address.city }}</h6>
                 </div>
             </div>
             <div class="d-flex justify-content-around m-4">
                 <div class="w-25" style="text-align: left;">
-                    <h6>Default Address : {{address.is_default}}</h6>
+                    <h6>Street 1 : {{ address.street1 }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Lanmark : {{address.lan_mark}}</h6>
+                    <h6>Street 2 : {{ address.street2 }}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Zipcode : {{ address.zipcode }}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Phone : {{ address.phone }}</h6>
+                </div>
+            </div>
+            <div class="d-flex justify-content-around m-4">
+                <div class="w-25" style="text-align: left;">
+                    <h6>Default Address : {{ address.is_default }}</h6>
+                </div>
+                <div class="w-25" style="text-align: left;">
+                    <h6>Lanmark : {{ address.lan_mark }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left; visibility: hidden;">
                     <h6></h6>
@@ -146,11 +147,8 @@ CHE.Home
                     <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                         <div class="modal-header border-0">
                             <h5 class="modal-title" style="color: black;" id="deleteModalLabel">Delete Customer</h5>
-
                         </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete this address?
-                        </div>
+                        <div class="modal-body">Are you sure you want to delete this address?</div>
                         <div class="modal-footer border-0">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <a href="{% url 'delete_address' address.id %}" class="btn btn-danger">Yes, Delete</a>
@@ -160,7 +158,6 @@ CHE.Home
             </div>
             <!-- end of delete modal -->
         </div>
-
         {% endfor %}
     </div>
 </div>
