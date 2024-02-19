@@ -153,6 +153,7 @@ def add_quotation_item(request, quotation_id, customer_id):
         "primary_address": primary_address,
         'quotation': quotation,
         "quotation_products": quotation_products if quotation_products else None,
+        'invoice_id': quotation_id,
         }
     return render(request, 'quotation/generate_quotation.html', context)
 
