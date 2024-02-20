@@ -53,9 +53,14 @@ def add_category(request):
         return redirect('category')
         
 
+from django.http import HttpResponseBadRequest
+from django.db.models.deletion import ProtectedError
 @login_required(login_url='login')
 def delete_category(request, category_id):
-    Category.objects.get(id=category_id).delete()
+    try:
+        Category.objects.get(id=category_id).delete()
+    except ProtectedError:
+        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
     return redirect('category')
 
 

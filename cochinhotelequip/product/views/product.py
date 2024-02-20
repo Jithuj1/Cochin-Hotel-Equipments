@@ -8,6 +8,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 import re
 
+from django.http import HttpResponseBadRequest
+from django.db.models.deletion import ProtectedError
+
 
 @login_required(login_url='login')
 def product(request):
@@ -103,7 +106,11 @@ def add_product(request):
 
 @login_required(login_url='login')
 def delete_product(request, product_id):
-    Product.objects.get(id=product_id).delete()
+    try:
+        Product.objects.get(id=product_id).delete()
+    except  ProtectedError:
+        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
+
     return redirect('product')
 
 
