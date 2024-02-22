@@ -191,7 +191,7 @@
                                     data-target="#deleteModal">Delete</a>
                                 <a href="{% url 'save_quotation' quotation.id %}" class="btn btn-success"
                                     style="background-color: rgb(34, 55, 34); border: none;">Save Quotation</a>
-                                <a href="{% url 'convert_to_invoice' invoice_id %}" class="btn btn-success"
+                                <a href="{% url 'convert_to_invoice' quotation.id %}" class="btn btn-success"
                                     style="background-color: rgb(28, 72, 105); border: none;">Convert to Invoice</a>
                             </div>
                         </div>

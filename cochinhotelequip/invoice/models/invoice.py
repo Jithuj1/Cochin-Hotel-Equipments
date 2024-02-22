@@ -125,7 +125,7 @@ class Invoice(BaseModel):
 
     @property
     def invoice_num(self):
-        if self.invoice_num_seq:
+        if not self.is_quotation:
             invoice_num_seq_in_five_digit = str(self.invoice_num_seq).zfill(5)
             return (
                 f"CHE/IVC/{self.invoice_num_fiscalyr}/{invoice_num_seq_in_five_digit}"

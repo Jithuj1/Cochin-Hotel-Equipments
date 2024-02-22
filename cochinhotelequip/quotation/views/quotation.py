@@ -9,6 +9,7 @@ import re
 from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
+import datetime
 
 
 @login_required(login_url='login')
@@ -236,3 +237,20 @@ def make_payment(request, quotation_id):
             return redirect('quotation')
         
         return redirect('quotation')
+
+
+@login_required(login_url='login')
+def convert_to_invoice(request, quotation_id: int):
+    quotation = Invoice.objects.get(id=quotation_id)
+    quotation_items = InvoiceItem.objects.filter(invoice=quotation_id)
+    if len(quotation_items) == 0:
+        quotation.delete()
+        return redirect('quotation')
+    
+    quotation.is_quotation = False
+    quotation.invoice_date = datetime.date()
+    quotation.save()
+
+    quotation_items.update(is_active = True)
+    quotation.generate_invoice_num()
+    return redirect('invoice')

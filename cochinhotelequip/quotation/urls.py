@@ -15,5 +15,6 @@ urlpatterns = [
     path('change_delivery_address/<int:quotation_id>/<int:customer_id>/<int:address_id>', change_delivery_address, name='change_delivery_address'),
     path('generate_quotation_pdf/<int:quotation_id>', generate_quotation_pdf, name='generate_quotation_pdf'),
     path('add_discount/<int:quotation_id>/<int:customer_id>', add_discount, name="add_discount"),
-    path('make_payment/<int:quotation_id>', make_payment, name="make_payment")
+    path('make_payment/<int:quotation_id>', make_payment, name="make_payment"),
+    path('convert-to-invoice/<int:quotation_id>', convert_to_invoice, name='convert_to_invoice'),
 ]
