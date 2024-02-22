@@ -23,8 +23,8 @@ class Invoice(BaseModel):
     is_active = models.BooleanField(default=True)
     is_quotation = models.BooleanField(default=True)
     discount = models.FloatField(default=0)
-    amount_paid = models.FloatField(null=True)
-    amount_remaining = models.FloatField(null=True)
+    amount_paid = models.IntegerField(default=0)
+    amount_remaining = models.IntegerField(default=0)
     sub_total = models.FloatField(default=0)
     grand_total = models.FloatField(default=0)
     tax_igst_total = models.FloatField(default=0)
@@ -95,26 +95,33 @@ class Invoice(BaseModel):
                 new_invoice_num_seq += 1
 
     def calculate_total(self):
-        tax_igst_total = tax_sgst_total = tax_cgst_total = sub_total = 0
-
         child_invoice_items = InvoiceItem.objects.filter(invoice=self)
-        for item in child_invoice_items:
-            tax_igst, tax_sgst, tax_cgst = item.igst, item.sgst, item.cgst
 
-            tax_igst_total += tax_igst
-            tax_sgst_total += tax_sgst
-            tax_cgst_total += tax_cgst
+        sub_total = sum([item.sub_total for item in child_invoice_items])
+        grand_total = sub_total - self.discount
 
-            sub_total += item.sub_total
-
-        grand_total = sub_total + tax_igst_total + tax_sgst_total + tax_cgst_total - self.discount
-
-        self.tax_igst_total = round(tax_igst_total, 2)
-        self.tax_sgst_total = round(tax_sgst_total, 2)
-        self.tax_cgst_total = round(tax_cgst_total, 2)
         self.sub_total = round(sub_total, 2)
-        self.grand_total = round(grand_total, 2)
+        self.grand_total = round(grand_total)
+        self.amount_remaining = grand_total - self.amount_paid
         self.save()
+
+    def make_payment(self, amount):
+        if self.amount_remaining < amount:
+            response = {
+                "status": False,
+                "message":"Paying amount greater than remaining amount"
+            }
+            return response
+        
+        self.amount_paid = self.amount_paid + amount
+        self.amount_remaining = self.grand_total - self.amount_paid
+        self.save()
+        response = {
+                "status": True,
+                "message":"Paid"
+            }
+        return response
+
 
     @property
     def invoice_num(self):
@@ -144,20 +151,8 @@ class InvoiceItem(BaseModel):
     sub_total = models.FloatField(null=True)
 
 
-    def calculate_item_totals(self, billing_state, billing_country):
-        igst, sgst, cgst = calculate_gst(
-            self.rate, 
-            self.product.tax_perc, 
-            billing_state, 
-            billing_country
-            )
-        
-        self.igst = igst * self.qty
-        self.sgst = sgst * self.qty
-        self.cgst = cgst * self.qty
-        self.total_gst = igst * self.qty + sgst * self.qty + cgst * self.qty
+    def calculate_item_totals(self):
         self.sub_total = self.rate * self.qty
-        self.grand_item_total = self.total_gst + (self.rate * self.qty)
         self.save()
 
 
