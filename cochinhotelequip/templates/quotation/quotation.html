@@ -49,19 +49,12 @@
                         <td>{{ quotation.sub_total }}</td>
                         <td>{{ quotation.discount }}</td>
                         <td>{{ quotation.grand_total }}</td>
-<<<<<<< HEAD
-                        <td class='d-flex justify-content-around'>
-                            <button class="btn btn-sm btn-danger me-1"  data-toggle="modal"
-                                data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            <a class="btn btn-sm btn-success me-1"
-=======
                         <td>{{ quotation.amount_paid }}</td>
                         <td>{{ quotation.amount_remaining }}</td>
                         <td>
                             <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal"
                                 data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;"
->>>>>>> 4fe09c3abd8bdb9ba2b067cd046fa27a683fe3c2
                                 href="{% url 'add_quotation_item' quotation.id quotation.customer.id %}"><i
                                     class="fas fa-eye"></i></a>
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;" id="downloadPdfButton"><i

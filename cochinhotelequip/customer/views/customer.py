@@ -111,7 +111,7 @@ def delete_customer(request, customer_id):
     try:
         User.objects.get(id=customer_id).delete()
     except ProtectedError:
-        messages.warning(request, "Unable to delete this user because it's linked to other data.")
+        messages.warning(request, "Unable to delete this user because it's linked to invoice, please clear it's use first.")
 
     return redirect('customer')
 
