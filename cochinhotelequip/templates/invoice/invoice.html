@@ -19,7 +19,6 @@
                 <button class="btn btn-success"
                     style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
             </form>
-            
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
                 href="{% url 'new_product' %}">Add product</a>
@@ -39,20 +38,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for product in products %}
+                    {% for invoice in invoice %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ product.name }}</td>
-                        <td>{{ product.category.name }}</td>
-                        <td>{{ product.hsn_code }}</td>
-                        <td>{{ product.price }}</td>
-                        <td>{{ product.unit }}</td>
-                        <td>{{ product.tax_perc }}</td>
+                        <td>{{ invoice.discount }}</td>
+                        <td>{{ invoice.amount_paid }}</td>
+                        <td>{{ invoice.amount_remaining }}</td>
+                        <td>{{ invoice.grand_total }}</td>
+                        <td>{{ invoice.tax_sgst_total }}</td>
+                        <td>{{ invoice.tax_cgst_total }}</td>
 
                         <td>
                             <button class="btn btn-sm btn-danger" style="margin-right: 15px;" data-toggle="modal"
                                 data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}"><i
+                            <a class="btn btn-sm btn-success" href=""><i
                                     class="fas fa-edit"></i></a>
                         </td>
                     </tr>
@@ -70,11 +69,11 @@
                                 <div class="modal-body">
                                     <p>If you delete this product, it will effect connected invoice</p>
                                     <p>It will shows blank products in connected invoice</p>
-                                    <p>Are you sure you want to delete product "{{ product.name }}" ?</p>
+                                    <p>Are you sure you want to delete product "" ?</p>
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
+                                    <a href="" class="btn btn-danger">Delete</a>
                                 </div>
                             </div>
                         </div>
@@ -106,7 +105,6 @@
         </div>
     </div>
 </div>
-
 <!-- Recent Sales End -->
 
 

@@ -104,9 +104,15 @@ def add_customer(request):
         return render(request, 'customer/add_customer.html')
     
 
+from django.http import HttpResponseBadRequest
+from django.db.models.deletion import ProtectedError
 @login_required(login_url='login')
 def delete_customer(request, customer_id):
-    customer = User.objects.get(id=customer_id).delete()
+    try:
+        User.objects.get(id=customer_id).delete()
+    except ProtectedError:
+        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
+
     return redirect('customer')
 
 
