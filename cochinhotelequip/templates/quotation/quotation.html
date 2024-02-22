@@ -51,10 +51,10 @@
                         <td>{{ quotation.tax_cgst_total }}</td>
                         <td>{{ quotation.tax_igst_total }}</td>
                         <td>{{ quotation.grand_total }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal"
+                        <td class='d-flex justify-content-around'>
+                            <button class="btn btn-sm btn-danger me-1"  data-toggle="modal"
                                 data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            <a class="btn btn-sm btn-success"
+                            <a class="btn btn-sm btn-success me-1"
                                 href="{% url 'add_quotation_item' quotation.id quotation.customer.id %}"><i
                                     class="fas fa-eye"></i></a>
                             <a class="btn btn-sm btn-success"

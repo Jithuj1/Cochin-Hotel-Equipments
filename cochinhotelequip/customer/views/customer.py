@@ -111,7 +111,7 @@ def delete_customer(request, customer_id):
     try:
         User.objects.get(id=customer_id).delete()
     except ProtectedError:
-        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
+        messages.warning(request, "Unable to delete this user because it's linked to other data.")
 
     return redirect('customer')
 
