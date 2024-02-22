@@ -9,21 +9,23 @@ import re
 from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
+import datetime
 
 
 @login_required(login_url='login')
 def quotation(request):
     if request.method == 'GET':
-        quotation_list = Invoice.objects.filter(is_quotation=True).order_by('-created_by')
+        quotation_list = Invoice.objects.filter(is_quotation=True).order_by('-created_at')
     else:
         search = request.POST.get('search')
-        q_object = Q()
+        print(search)
+        q_object = Q(is_quotation=True)
         q_object.add(Q(customer__first_name__icontains=search), Q.OR)
         q_object.add(Q(customer__last_name__icontains=search), Q.OR)
         q_object.add(Q(quotation_date__icontains=search), Q.OR)
         q_object.add(Q(grand_total__icontains=search), Q.OR)
 
-        quotation_list = Invoice.objects.filter(q_object).order_by('-created_by')
+        quotation_list = Invoice.objects.filter(q_object).order_by('-created_at')
 
     page = request.GET.get('page', 1)
 
@@ -138,7 +140,7 @@ def add_quotation_item(request, quotation_id, customer_id):
                 )
         quotation_item.save()
 
-        quotation_item.calculate_item_totals(primary_address.state, primary_address.country)
+        quotation_item.calculate_item_totals()
         quotation_item.invoice.calculate_total()
         return redirect('add_quotation_item', quotation_id, customer_id)
  
@@ -160,9 +162,6 @@ def add_quotation_item(request, quotation_id, customer_id):
 
 def edit_quotation_item(request, quotation_item_id, quotation_id, customer_id):
     if request.method == 'POST':
-        customer = User.objects.get(id=customer_id)
-        address = Address.objects.filter(customer=customer).order_by('is_default')
-        primary_address = address.first()
 
         quantity = int(request.POST.get('quantity'))
         rate = float(request.POST.get('rate'))
@@ -172,7 +171,7 @@ def edit_quotation_item(request, quotation_item_id, quotation_id, customer_id):
         quotation_item.rate = rate
         quotation_item.save()
         
-        quotation_item.calculate_item_totals(primary_address.state, primary_address.country)
+        quotation_item.calculate_item_totals()
         quotation_item.invoice.calculate_total()
 
         return redirect('add_quotation_item', quotation_id, customer_id)
@@ -192,6 +191,7 @@ def save_quotation(request, quotation_id):
     if len(quotation_items) == 0:
         quotation.delete()
         return redirect('quotation')
+    quotation_items.update(is_active=True)
     quotation.generate_quotaion_num()
     quotation.calculate_total()
     return redirect('quotation')
@@ -205,3 +205,52 @@ def change_delivery_address(request, quotation_id, customer_id, address_id):
     address.save()
     return redirect('add_quotation_item', quotation_id, customer_id)
 
+
+@login_required(login_url='login')
+def add_discount(request, quotation_id, customer_id):
+    if request.method == 'POST':
+
+        discount = int(request.POST.get('discount'))
+
+        quotation = Invoice.objects.get(id=quotation_id)
+        if discount > quotation.amount_remaining:
+            messages.error(request, "You can't provide discount more than amount remaining")
+            return redirect('add_quotation_item', quotation_id, customer_id)
+        quotation.discount = discount
+        quotation.save()
+        
+        quotation.calculate_total()
+
+        return redirect('add_quotation_item', quotation_id, customer_id)
+    
+
+@login_required(login_url='login')
+def make_payment(request, quotation_id):
+    if request.method == 'POST':
+        amount = int(request.POST.get('amount'))
+        quotation = Invoice.objects.get(id=quotation_id)
+
+        response = quotation.make_payment(amount)
+
+        if not response["status"] :
+            messages.error(request, response["message"])
+            return redirect('quotation')
+        
+        return redirect('quotation')
+
+
+@login_required(login_url='login')
+def convert_to_invoice(request, quotation_id: int):
+    quotation = Invoice.objects.get(id=quotation_id)
+    quotation_items = InvoiceItem.objects.filter(invoice=quotation_id)
+    if len(quotation_items) == 0:
+        quotation.delete()
+        return redirect('quotation')
+    
+    quotation.is_quotation = False
+    quotation.invoice_date = datetime.date()
+    quotation.save()
+
+    quotation_items.update(is_active = True)
+    quotation.generate_invoice_num()
+    return redirect('invoice')

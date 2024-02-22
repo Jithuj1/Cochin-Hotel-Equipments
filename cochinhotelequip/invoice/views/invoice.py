@@ -9,24 +9,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 @login_required(login_url='login')
 def invoice(request):
-    invoice = Invoice.objects.filter(is_quotation=True).order_by('-invoice_date')
+    invoice_list = Invoice.objects.filter(is_quotation=False).order_by('-invoice_date')
     context = {
-        'invoice': invoice,
+        'invoice_list': invoice_list,
         "active_page": "invoice",
 
     }
     return render(request, 'invoice/invoice.html', context)
-
-
-@login_required(login_url='login')
-def convert_to_invoice(request, invoice_id: int):
-    invoice = Invoice.objects.get(id=invoice_id)
-    invoice_items = InvoiceItem.objects.filter(invoice=invoice)
-    if len(invoice_items) == 0:
-        invoice.delete()
-        return redirect('invoice')
-    invoice.generate_quotaion_num()
-    invoice.calculate_total()
-    invoice.is_quotation = True
-    invoice.save()
-    return redirect('invoice')
