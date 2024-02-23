@@ -79,9 +79,8 @@ class Invoice(BaseModel):
             .order_by("-invoice_num_seq")
             .first()
         )
-
         current_invoice_num = (
-            highest_invoice_num_obj.invoice_num_seq if highest_invoice_num_obj else 1
+            highest_invoice_num_obj.invoice_num_seq if highest_invoice_num_obj.invoice_num_seq else 1
         )
 
         new_invoice_num_seq = current_invoice_num
