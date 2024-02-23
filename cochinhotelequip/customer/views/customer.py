@@ -112,10 +112,19 @@ from django.db.models.deletion import ProtectedError
 def delete_customer(request, customer_id):
     try:
         User.objects.get(id=customer_id).delete()
+        try:
+            page_number =  request.GET.get('page')
+            print('page',  request.GET.get('page') , type(page_number))
+        except Exception as e:
+            messages.warning(request, e)
+
     except ProtectedError:
         messages.warning(request, "Unable to delete this user because it's linked to invoice, please clear it's use first.")
 
-    return redirect('customer')
+    # return redirect('customer')
+    return redirect(reverse('customer')+f'?page={page_number}')
+
+
 
 
 @login_required(login_url='login')

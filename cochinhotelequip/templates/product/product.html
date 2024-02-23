@@ -9,13 +9,15 @@
 <style>
     #toastbox{
       position: absolute;
-      bottom: 30px;
+      top: 80px;
       right: 30px;
       display: flex;
       align-items: flex-end;
       flex-direction: column;
       overflow: hidden;
       padding: 20px;
+      font-weight: bold;
+      font-size: 12px;
       }
       
       
@@ -104,7 +106,7 @@
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
+                                    <a href="{% url 'delete_product' product.id %}?page={{ products.number }}" class="btn btn-danger">Delete</a>
                                 </div>
                             </div>
                         </div>
@@ -124,6 +126,7 @@
                 {% endif %}
 
                 <span class="current">
+                    <input type='text' name='page' value='{{products.number}}' style='display:none' />
                     Page {{ products.number }} of {{ products.paginator.num_pages }}.
                 </span>
 

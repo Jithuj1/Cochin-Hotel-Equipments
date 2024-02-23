@@ -10,13 +10,15 @@ CHE.Customer
 <style>
   #toastbox{
     position: absolute;
-    bottom: 30px;
+    top: 80px;
     right: 30px;
     display: flex;
     align-items: flex-end;
     flex-direction: column;
     overflow: hidden;
     padding: 20px;
+    font-weight: bold;
+    font-size: 12px;
     }
     
     
@@ -93,7 +95,7 @@ CHE.Customer
                 </div>
                 <div class="modal-footer border-0">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger">Yes, Delete</a>
+                  <a href="{% url 'delete_customer' customer.id %}?page={{ customers.number }}" class="btn btn-danger">Yes, Delete</a>
                 </div>
               </div>
             </div>
