@@ -25,3 +25,12 @@ class Address(BaseModel):
     phone = PhoneNumberField(null=True, blank=True)
     is_default = models.BooleanField(default=False)
     lan_mark = models.CharField(max_length=50, null=True)
+
+    def update_customer_details(self):
+        if not str(self.phone).startswith("+91"):
+            # If not, prepend "+91" to the phone number
+            self.phone = "+91" + str(self.phone)
+
+       
+        # Save the changes
+        self.save()

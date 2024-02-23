@@ -98,6 +98,7 @@ def add_customer(request):
 
                 )
                 user.update_customer_details()
+                address.update_customer_details()
                 return redirect('customer')
         except Exception as e :
             messages.error(request, f"{e}")
@@ -199,6 +200,7 @@ def add_address(request, customer_id):
                     phone=phone
 
                 )
+                address.update_customer_details()
                 url = reverse('view_customer', kwargs={'customer_id': customer_id})
                 return redirect(url)
         except Exception as e :
@@ -244,6 +246,7 @@ def update_customer(request, customer_id):
         customer.remarks = remarks if remarks != "" else customer.remarks
 
         customer.save()
+        customer.update_customer_details()
         url = reverse('view_customer', kwargs={'customer_id': customer_id})
         return redirect(url)
     
@@ -292,7 +295,7 @@ def update_address(request, address_id):
                 address.phone = phone if phone !="" else address.phone
 
                 address.save()
-                
+                address.update_customer_details()
                 if default_address:
                     Address.objects.filter(customer=address.customer).exclude(id=address.id).update(is_default=False)
         except Exception as e :

@@ -89,6 +89,14 @@ class User(AbstractBaseUser,):
         # Capitalize the first name and last name
         self.first_name = self.first_name.capitalize()
         self.last_name = self.last_name.capitalize()
+
+        # Lowercase the email address
+        self.email = self.email.lower()
+        
+        if not str(self.phone).startswith("+91"):
+            # If not, prepend "+91" to the phone number
+            self.phone = "+91" + str(self.phone)
+
         # Save the changes
         self.save()
 
