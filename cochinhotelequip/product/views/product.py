@@ -109,7 +109,7 @@ def delete_product(request, product_id):
     try:
         Product.objects.get(id=product_id).delete()
     except  ProtectedError:
-        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
+        messages.warning(request, "Cannot delete this product because it is referenced by other objects.")
 
     return redirect('product')
 

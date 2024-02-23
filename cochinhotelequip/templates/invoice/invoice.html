@@ -52,8 +52,7 @@
                         <td>{{ invoice.amount_paid }}</td>
                         <td>{{ invoice.amount_remaining }}</td>
                         <td>
-                            <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal"
-                                data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+                            
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;"
                                 href="{% url 'add_quotation_item' invoice.id invoice.customer.id %}"><i
                                     class="fas fa-eye"></i></a>

@@ -6,6 +6,36 @@
 
 
 {% block content %}
+<style>
+    #toastbox{
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      align-items: flex-end;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 20px;
+      }
+      
+      
+      .alert::after{
+        content: '';
+        position: absolute;
+        left:0;
+        bottom:0;
+        width: 100%;
+        height: 5px;
+        background: red;
+        animation: anim 6s linear forwards;
+      }
+      @keyframes anim {
+        100%{
+          width: 0;
+        }
+      }
+  </style>
+
 
 
 <!-- Recent Sales Start -->
@@ -106,8 +136,31 @@
         </div>
     </div>
 </div>
+<div id='toastbox'>
 
-<!-- Recent Sales End -->
+</div>
 
+<!-- scripts for modal -->
+<script>
+  // get the toastbox element
+  let toastBox = document.getElementById('toastbox')
+  {% if messages %}
+  {% for message in messages %}
+  showToast('{{ message }}')
+  {% endfor %}
+  {% endif %}
+function showToast(message){
+  let toast = document.createElement('div')
+  
+  toast.classList.add('alert','alert-danger')
+  toast.innerHTML = message
+  toastBox.appendChild(toast);
+
+  // after 6s toast will remove
+  setTimeout(()=>{
+    toast.remove()
+  }, 6000)
+}
+</script>
 
 {% endblock %}
