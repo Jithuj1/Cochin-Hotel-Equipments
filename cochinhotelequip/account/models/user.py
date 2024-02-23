@@ -84,10 +84,18 @@ class User(AbstractBaseUser,):
 
     def __str__(self):
         return self.username or self.display_name
+    
+    def update_customer_details(self):
+        # Capitalize the first name and last name
+        self.first_name = self.first_name.capitalize()
+        self.last_name = self.last_name.capitalize()
+        # Save the changes
+        self.save()
+
 
     @property
     def full_name(self):
-        return f"{self.first_name.capitalize()} {self.last_name.capitalize()}"
+        return f"{self.first_name} {self.last_name}"
 
     @property
     def get_phone_as_list(self):

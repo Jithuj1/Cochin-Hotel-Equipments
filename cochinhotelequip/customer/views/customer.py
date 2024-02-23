@@ -97,6 +97,7 @@ def add_customer(request):
                     phone=phone
 
                 )
+                user.update_customer_details()
                 return redirect('customer')
         except Exception as e :
             messages.error(request, f"{e}")
