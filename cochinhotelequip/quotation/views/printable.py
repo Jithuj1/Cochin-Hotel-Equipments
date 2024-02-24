@@ -39,21 +39,33 @@ def generate_quotation_pdf(request, quotation_id):
         "company_address": company_address_ernakulam if quotation.store == "ERNAKULAM" else company_address_thissur
     }
 
+    header_context = {
+        "quotation": quotation,
+        "date":quotation.quotation_date if quotation.is_quotation else quotation.invoice_date
+    }
+    footer_context = {
+        "store": True if quotation.store == "ERNAKULAM" else False
+    }
+
     body_html = get_template('printable/quotation.html')
     footer_template = get_template('printable/footer.html')
-    footer_file =  footer_template.render()
+    header_template = get_template('printable/header.html')
+    footer_file =  footer_template.render(footer_context)
+    header_file =  header_template.render(header_context)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as footer_html_file:
         footer_html_file.write(footer_file.encode("utf-8"))
-        html_file_path = footer_html_file.name
+        footer_file_path = footer_html_file.name
 
-    footer_file_path = html_file_path
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as header_html_file:
+        header_html_file.write(header_file.encode("utf-8"))
+        header_file_path = header_html_file.name
 
     html = body_html.render(context)
 
     pdf_options = {
         "page-size": "A4",
-        "margin-top": "0.25in",
+        "margin-top": "1.85in",
         "margin-right": "0.25in",
         "margin-bottom": "0.75in",
         "margin-left": "0.25in",
@@ -63,6 +75,7 @@ def generate_quotation_pdf(request, quotation_id):
         "--keep-relative-links": "",
         "dpi": 500,
         "footer-html": footer_file_path,
+        "header-html": header_file_path,
     }
 
     pdf_file = pdfkit.from_string(
