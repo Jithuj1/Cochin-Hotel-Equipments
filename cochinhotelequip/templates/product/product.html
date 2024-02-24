@@ -84,7 +84,7 @@
                         <td>
                             <button class="btn btn-sm btn-danger" style="margin-right: 15px;" data-toggle="modal"
                                 data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}"><i
+                            <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}?page={{ products.number }}"><i
                                     class="fas fa-edit"></i></a>
                         </td>
                     </tr>

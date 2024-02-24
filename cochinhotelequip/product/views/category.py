@@ -70,10 +70,11 @@ def delete_category(request, category_id):
 
 @login_required(login_url='login')
 def update_category(request, category_id):
+    page_number =  request.GET.get('page')
+
     name = request.POST.get('category')
-    print(name)
     category = Category.objects.get(id=category_id)
     category.name = name
     category.save()
 
-    return redirect('category')
+    return redirect(reverse('category')+f'?page={page_number}')

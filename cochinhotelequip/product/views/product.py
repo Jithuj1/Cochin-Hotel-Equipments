@@ -118,6 +118,11 @@ def delete_product(request, product_id):
 
 @login_required(login_url='login')
 def update_product(request, product_id):
+
+   
+    page_number =  request.GET.get('page')
+    print("page", page_number)
+
     product = Product.objects.filter(id=product_id).first()
     category_list = Category.objects.all()
     if product and product.category:
@@ -126,12 +131,15 @@ def update_product(request, product_id):
     context = {
         "product":product,
         "category_list":category_list,
-        "active_page":"product"
+        "active_page":"product",
+        'page_number': page_number,
         }
     if request.method =="GET":
         
         return  render(request, 'product/update_product.html', context) 
     else:
+        page_number =  request.GET.get('page')
+
         product_name = request.POST.get('product_name')
         hsn_code = request.POST.get('hsn_code')
         tax_perc = request.POST.get('tax_perc')
@@ -179,5 +187,7 @@ def update_product(request, product_id):
         product.category = new_category
 
         product.save()
+        print('post', page_number)
+        return redirect(reverse('product')+f'?page={page_number}')
 
-        return redirect('product')
+        

@@ -143,6 +143,7 @@ def delete_address(request, address_id):
 
 @login_required(login_url='login')
 def view_customer(request, customer_id):
+    # page number
     page_number =  request.GET.get('page')
     customer = User.objects.filter(id=customer_id).first()
     address_list = Address.objects.filter(customer = customer)
@@ -157,10 +158,12 @@ def view_customer(request, customer_id):
 
 @login_required(login_url='login')
 def add_address(request, customer_id):
+    page_number =  request.GET.get('page')
     if request.method =="GET":
         context = {
         "customer":customer_id,
-        "active_page":"customer"
+        "active_page":"customer",
+        'page_number': page_number,
         }
         return  render(request, 'customer/add_address.html', context)
     else:
@@ -179,14 +182,14 @@ def add_address(request, customer_id):
 
         if phone == "" or pincode == "" or city =="" or street1 == "":
             messages.error(request, "street 1, city, phone and pincode can't be blank")
-            url = reverse('add_address', kwargs={'customer_id': customer_id})
+            url = reverse('add_address', kwargs={'customer_id': customer_id})+f'?page={page_number}'
             return redirect(url)
         if phone :
             phone_pattern = re.compile(r'^(\+91)?\d{10}$')
 
             if not phone_pattern.match(phone):
                 messages.error(request, "phone number is not acceptable")
-                url = reverse('add_address', kwargs={'customer_id': customer_id})
+                url = reverse('add_address', kwargs={'customer_id': customer_id})+f'?page={page_number}'
                 return redirect(url)
         try:
             with transaction.atomic():
@@ -208,7 +211,7 @@ def add_address(request, customer_id):
 
                 )
                 address.update_customer_details()
-                url = reverse('view_customer', kwargs={'customer_id': customer_id})
+                url = reverse('view_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
                 return redirect(url)
         except Exception as e :
             messages.error(request, f"{e}")
@@ -216,10 +219,14 @@ def add_address(request, customer_id):
 
 @login_required(login_url='login')
 def update_customer(request, customer_id):
+    page_number =  request.GET.get('page')
+
     customer = User.objects.filter(id=customer_id).first()
     context = {
         "customer":customer,
-        "active_page":"customer"
+        "active_page":"customer",
+        'page_number': page_number,
+
         }
     if request.method =="GET":
         
@@ -234,7 +241,7 @@ def update_customer(request, customer_id):
 
         if any(value is not None and value.isspace() for value in [first_name, last_name, email, phone, display_name, remarks]):
             messages.error(request, "Input cannot be blank or None")
-            url = reverse('update_customer', kwargs={'customer_id': customer_id})
+            url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
             return redirect(url)
 
         if phone :
@@ -242,7 +249,7 @@ def update_customer(request, customer_id):
 
             if not phone_pattern.match(phone):
                 messages.error(request, "phone number is not acceptable")
-                url = reverse('update_customer', kwargs={'customer_id': customer_id})
+                url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
                 return redirect(url)
             
         customer.first_name = first_name if first_name != "" else customer.first_name
@@ -254,16 +261,19 @@ def update_customer(request, customer_id):
 
         customer.save()
         customer.update_customer_details()
-        url = reverse('view_customer', kwargs={'customer_id': customer_id})
+        url = reverse('view_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
         return redirect(url)
     
 
 @login_required(login_url='login')
 def update_address(request, address_id):
+    page_number =  request.GET.get('page')
+
     address = Address.objects.filter(id=address_id).first()
     context = {
         "address":address,
-        "active_page":"customer"
+        "active_page":"customer",
+        'page_number': page_number,
         }
     if request.method =="GET":
         return  render(request, 'customer/update_address.html', context) 
@@ -310,5 +320,6 @@ def update_address(request, address_id):
             url = reverse('update_address', kwargs={'address_id': address.id})
             return redirect(url)
 
-        url = reverse('view_customer', kwargs={'customer_id': address.customer.id})
+        url = reverse('view_customer', kwargs={'customer_id': address.customer.id})+f'?page={page_number}'
         return redirect(url)
+           

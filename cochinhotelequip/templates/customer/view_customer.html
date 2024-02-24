@@ -45,7 +45,7 @@ CHE.Home
              href="{% url 'customer' %}?page={{ page_number }}"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Go Back</a>
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                href="{% url 'update_customer' customer.id %}"><i class="fa fa-user-edit me-2" style="margin-right: 10px;"></i>Edit Details</a>
+                href="{% url 'update_customer' customer.id %}?page={{ page_number }}"><i class="fa fa-user-edit me-2" style="margin-right: 10px;"></i>Edit Details</a>
             </div>
         </div>
         <div class="table-responsive" style="border: 2px solid rgb(58, 82, 106);">
@@ -89,7 +89,7 @@ CHE.Home
             <h2 class="mb-0">Address Details</h2>
             <a class="btn btn-light"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                href="{% url 'add_address' customer.id %}"><i class="fas fa-address-card"
+                href="{% url 'add_address' customer.id %}?page={{ page_number }}"><i class="fas fa-address-card"
                     style="margin-right: 10px;"></i>Add Address</a>
         </div>
         {% for address in address_list %}
@@ -100,7 +100,7 @@ CHE.Home
                     <a class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"><i
                             class="fas fa-trash-alt"></i></a>
                     <a class="btn btn-success" style="margin-left: 20px; padding-left:15px; padding-right: 15px;"
-              href=" {% url 'update_address' address.id %}"><i class="fas fa-edit">edit</i></a>
+              href=" {% url 'update_address' address.id %}?page={{ page_number }}"><i class="fas fa-edit">edit</i></a>
                 </div>
             </div>
             <div class="d-flex justify-content-around m-4">
