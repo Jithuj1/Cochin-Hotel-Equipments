@@ -7,6 +7,8 @@ from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 import re
+from django.urls import reverse
+
 
 
 @login_required(login_url='login')
@@ -58,10 +60,12 @@ from django.db.models.deletion import ProtectedError
 @login_required(login_url='login')
 def delete_category(request, category_id):
     try:
+        page_number =  request.GET.get('page')
+
         Category.objects.get(id=category_id).delete()
     except ProtectedError:
         messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
-    return redirect('category')
+    return redirect(reverse('category')+f'?page={page_number}')
 
 
 @login_required(login_url='login')

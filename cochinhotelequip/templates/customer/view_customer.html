@@ -39,9 +39,14 @@ CHE.Home
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h2 class="mb-0">Customer Details</h2>
+            <div>
+            <a class='btn btn-success'
+            style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
+             href="{% url 'customer' %}?page={{ page_number }}"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Go Back</a>
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
                 href="{% url 'update_customer' customer.id %}"><i class="fa fa-user-edit me-2" style="margin-right: 10px;"></i>Edit Details</a>
+            </div>
         </div>
         <div class="table-responsive" style="border: 2px solid rgb(58, 82, 106);">
             <div class="d-flex justify-content-around m-4">
