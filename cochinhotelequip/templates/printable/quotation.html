@@ -109,11 +109,31 @@
             -webkit-box-pack: justify;
             font-size: 12px;
             padding-top: 5px;
+            padding-bottom: 10px;
         }
 
-        .price-details .signature{
+        .price-details .terms-conditions {
             padding: 10px;
             font-size: 10px;
+        }
+
+        .signature {
+            font-size: 10px;
+            margin-top: 10px;
+            padding: 0 10px;
+            border: 1px solid #c4c4c4;
+        }
+
+        .signature .signature-part {
+            display: -webkit-box;
+            -webkit-box-pack: justify;
+            padding-top: 30px;
+            padding-bottom: 10px;
+        }
+
+        .overline {
+            border-top: 0.7px solid rgb(49, 46, 46);
+            width: 95px;
         }
     </style>
 </head>
@@ -186,8 +206,8 @@
                         <th style="width: 10%;">Hsn Code</th>
                         <th style="width: 30%;">Product</th>
                         <th style="width: 8%;">Qty</th>
+                        <th style="width: 8%;">Unit</th>
                         <th style="width: 14%;">Rate</th>
-                        <th style="width: 8%;">Tax %</th>
                         <th style="width: 13%;">GST</th>
                         <th style="width: 18%;">Sub Total</th>
                     </tr>
@@ -199,10 +219,10 @@
                         <td>{{item.product.hsn_code}}</td>
                         <td>{{item.product.name}}</td>
                         <td>{{item.qty}}</td>
+                        <td>{{item.product.unit}}</td>
                         <td>{{item.rate}}</td>
-                        <td>{{item.product.tax_perc}}</td>
-                        <td>{{item.total_gst}}</td>
-                        <td>{{item.grand_item_total}}</td>
+                        <td>0.00</td>
+                        <td>{{item.sub_total}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -213,7 +233,7 @@
     <!-- Price details -->
     <section>
         <section class="price-details">
-            <div class="signature">
+            <div class="terms-conditions">
                 <div>
                     <h5>Terms And Conditions</h5>
                     <p>1). Quotation validity: 30 days</p>
@@ -225,28 +245,16 @@
             </div>
             <div class="price-list">
                 <div class="price">
-                    <div>Total Sgst : </div>
-                    <div>{{quotation.tax_sgst_total}}</div>
-                </div>
-                <div class="price">
-                    <div>Total Cgst : </div>
-                    <div>{{quotation.tax_cgst_total}}</div>
-                </div>
-                <div class="price">
-                    <div>Total Igst : </div>
-                    <div>{{quotation.tax_igst_total}}</div>
-                </div>
-                <div class="price">
-                    <div>Total GST : </div>
-                    <div>{{total_gst}}</div>
-                </div>
-                <div class="price">
                     <div>Sub Total : </div>
                     <div>{{quotation.sub_total}}</div>
                 </div>
-                <div class="price" style="border-bottom: 1px solid #c4c4c4;">
+                <div class="price">
                     <div>Discount : </div>
                     <div>{{quotation.discount}}</div>
+                </div>
+                <div class="price" style="border-bottom: 1px solid #c4c4c4;">
+                    <div>GST : </div>
+                    <div>{{total_gst}}</div>
                 </div>
                 <div class="price">
                     <div>Grand Total : </div>
@@ -254,6 +262,22 @@
                 </div>
             </div>
         </section>
+    </section>
+
+    <!-- fianl signature -->
+    <section>
+        <div class="signature">
+            <div>
+                <p>Sales Exe. Name : </p>
+            </div>
+            <div class="signature-part">
+                <div class="overline">Sales Exe. Signature
+                </div>
+                <div class="overline" style="margin-right: 15px;">
+                    Customer Signature
+                </div>
+            </div>
+        </div>
     </section>
 </body>
 

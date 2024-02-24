@@ -39,20 +39,30 @@ def generate_quotation_pdf(request, quotation_id):
         "company_address": company_address_ernakulam if quotation.store == "ERNAKULAM" else company_address_thissur
     }
 
-    template = get_template('printable/quotation.html')
-    html = template.render(context)
+    body_html = get_template('printable/quotation.html')
+    footer_template = get_template('printable/footer.html')
+    footer_file =  footer_template.render()
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as footer_html_file:
+        footer_html_file.write(footer_file.encode("utf-8"))
+        html_file_path = footer_html_file.name
+
+    footer_file_path = html_file_path
+
+    html = body_html.render(context)
 
     pdf_options = {
         "page-size": "A4",
         "margin-top": "0.25in",
         "margin-right": "0.25in",
-        "margin-bottom": "0.25in",
+        "margin-bottom": "0.75in",
         "margin-left": "0.25in",
         "encoding": "UTF-8",
         "disable-smart-shrinking": None,
         "enable-local-file-access": None,
         "--keep-relative-links": "",
         "dpi": 500,
+        "footer-html": footer_file_path,
     }
 
     pdf_file = pdfkit.from_string(
