@@ -10,6 +10,7 @@ from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
 import datetime
+from django.urls import reverse
 
 
 @login_required(login_url='login')
@@ -18,7 +19,6 @@ def quotation(request):
         quotation_list = Invoice.objects.filter(is_quotation=True).order_by('-created_at')
     else:
         search = request.POST.get('search')
-        print(search)
         q_object = Q(is_quotation=True)
         q_object.add(Q(customer__first_name__icontains=search), Q.OR)
         q_object.add(Q(customer__last_name__icontains=search), Q.OR)
@@ -223,13 +223,12 @@ def add_discount(request, quotation_id, customer_id):
 
         return redirect('add_quotation_item', quotation_id, customer_id)
     
-from django.urls import reverse
+
 @login_required(login_url='login')
 def make_payment(request, quotation_id):
     if request.method == 'POST':
         amount = int(request.POST.get('amount'))
         page_number = int(request.POST.get('page_value'))
-        print('page', page_number)
 
         quotation = Invoice.objects.get(id=quotation_id)
 
@@ -239,7 +238,7 @@ def make_payment(request, quotation_id):
             messages.error(request, response["message"])
             return redirect(reverse('quotation')+f'?page={page_number}')
         
-        return redirect('quotation')
+        return redirect(reverse('quotation')+f'?page={page_number}')
 
 
 @login_required(login_url='login')

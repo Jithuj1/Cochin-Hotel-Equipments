@@ -30,33 +30,13 @@
     #yourTableId {
         -ms-overflow-style: none;
     }
+
 </style>
 <!-- end of style -->
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
-        <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
-            <div class="modal-header border-0">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Quotaion</h5>
-
-            </div>
-            <div class="modal-body">
-                <p>Are you sure, you want to delete this quotation permanently ?</p>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <a href="{% url 'delete_quotation' quotation.id %}" class="btn btn-danger">Delete</a>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- end of delete modal -->
-
 <!-- add disocunt modal -->
-<div class="modal fade" id="discountModal{{ quotation.id }}" tabindex="-1" role="dialog"
-    aria-labelledby="discountModalLabel{{ quotation.id }}" aria-hidden="true">
+<div class="modal fade" id="discountModal{{ invoice.id }}" tabindex="-1" role="dialog"
+    aria-labelledby="discountModalLabel{{ invoice.id }}" aria-hidden="true">
     <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center" role="document">
         <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
             <div class="modal-header border-0">
@@ -64,11 +44,11 @@
             </div>
 
             <!-- Form starts here -->
-            <form method="post" action="{% url 'add_discount' quotation.id customer.id %}">
+            <form method="post" action="{% url 'add_discount' invoice.id %}">
                 {% csrf_token %}
                 <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                     <input class="form-control bg-dark border-0 w-75" name="discount" type="number"
-                        value="{{ quotation.discount }}" min=1>
+                        value="{{ invoice.discount }}" min="1" step="1">
                 </div>
 
                 <div class="modal-footer border-0">
@@ -91,9 +71,9 @@
                     <div class="col-sm-12 col-xl-6 w-100">
                         <div class="bg-secondary rounded p-4">
                             <div class="d-flex align-items-center justify-content-between">
-                                <h6 class="mb-4">Quotation Products</h6>
+                                <h6 class="mb-4">Invoice Items</h6>
                                 <div class="form-floating mb-3">
-                                    <form method='post'>
+                                    <form method='post' style="visibility: hidden;">
                                         <div class="input-group mb-3">
 
                                             {% csrf_token %}
@@ -120,49 +100,24 @@
                                         <th style="width: 10%;" scope="col">Qty</th>
                                         <th style="width: 15%;" scope="col">Price</th>
                                         <th style="width: 15%;" scope="col">Sub Total</th>
-                                        <th style="width: 13%;" scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for item in quotation_products %}
-                                    <form method='post'
-                                        action="{% url 'edit_quotation_item' item.id quotation.id customer.id %}">
-                                        {% csrf_token %}
-                                        <tr>
-                                            <td> {{forloop.counter}}</td>
-                                            <td> {{item.product.name }}</td>
-                                            <td><input type='number' style="width:100%;"
-                                                    class="bg-secondary text-white border-0" name='quantity'
-                                                    value="{{item.qty}}" min='1' pattern='\d+'></td>
-                                            <td><input style="width:100%;" class="bg-secondary text-white border-0"
-                                                    type='number' size=5 value='{{item.rate}}' name='rate'></td>
-                                            <td>{{item.sub_total}}</td>
-                                            <td>
-                                                <a href="{% url 'delete_quotation_product' item.id %}"
-                                                    data-toggle="tooltip" data-placement="top" title="Delete"
-                                                    class="btn btn-danger"
-                                                    style="width: 25px; height: 25px; font-size: 12px; padding: 0; padding-top: 3px;">
-                                                    <span aria-hidden="true"><i class="fas fa-trash-alt"></i></span></a>
-                                                <button
-                                                    style="margin-left: 10px; width: 26px; height: 26px; font-size: 12px; padding: 0;"
-                                                    class='btn btn-success' type='submit' data-toggle="tooltip"
-                                                    data-placement="top" title="Save changes"><i
-                                                        class="fas fa-edit"></i></button>
-                                            </td>
-
-                                        </tr>
+                                    {% for item in invoice_items %}
+                                    <tr>
+                                        <td> {{forloop.counter}}</td>
+                                        <td> {{item.product.name }}</td>
+                                        <td> {{item.qty }}</td>
+                                        <td> {{item.rate }}</td>
+                                        <td> {{item.sub_total }}</td>
+                                    </tr>
                                     </form>
                                     {% endfor %}
                                 </tbody>
                             </table>
                             <div class="mt-4 d-flex align-items-center justify-content-evenly">
-                                <a href="{% url 'delete_quotation' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(94, 61, 61); border: none;" data-toggle="modal"
-                                    data-target="#deleteModal">Delete</a>
-                                <a href="{% url 'save_quotation' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(34, 55, 34); border: none;">Save Quotation</a>
-                                <a href="{% url 'convert_to_invoice' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(28, 72, 105); border: none;">Convert to Invoice</a>
+                                <a href="{% url 'invoice' %}?page={{ page }}" class="btn btn-success"
+                                    style="background-color: rgb(28, 72, 105); border: none;">Back</a>
                             </div>
                         </div>
                     </div>
@@ -178,9 +133,7 @@
                     <div id="yourTableId" class="bg-secondary rounded h-100"
                         style="max-height: 250px; overflow-y: auto;">
                         <h6 class="mb-4">Customer details and invoice</h6>
-                        <p>Customer Name : {{customer.full_name}}</p>
-                        {% for address in address_list %}
-                        {% if address.is_default %}
+                        <p>Customer Name : {{invoice.customer.full_name}}</p>
                         <div>
                             <p style="font-size: 16px; margin: 0; font-weight: bold;">Delivery Address</p>
                             <!-- <summary class="fw-bold fs-base text-muted mb-2">{{address.city}}</summary> -->
@@ -192,25 +145,6 @@
                                 Phone : {{address.phone}}</p>
 
                         </div>
-                        {% else %}
-                        <div>
-                            <p style="font-size: 16px;">Address line {{forloop.counter}}</p>
-                            <details>
-                                <summary class="fw-bold fs-base text-muted mb-2">{{address.street1}},
-                                    {{address.street2}}, {{address.city}}</summary>
-                                <p>{{address.street1}}<br />
-                                    {{address.street2}}<br />
-                                    {{address.city}},
-                                    {{address.state}}, {{address.country}}
-                                    {{address.zipcode}}<br />
-                                    {{address.phone}} <br>
-                                    <a href="{% url 'change_delivery_address' quotation.id customer.id address.id%}"
-                                        style="color: rgb(36, 200, 212);">Deliver to this address</a>
-                                </p>
-                            </details>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -220,7 +154,7 @@
                 <div class="bg-secondary rounded h-100 p-2">
                     <div class="d-flex justify-content-between">
                         <h6 class="mb-2">Amount Details</h6>
-                        <button data-toggle="modal" data-target="#discountModal{{quotation.id}}"
+                        <button data-toggle="modal" data-target="#discountModal{{invoice.id}}"
                             style="margin-right: 10px; margin-bottom: 5px; border-radius: 5px; background-color: rgb(34, 55, 34); color: white; border: none;">
                             <i class="fas fa-plus"></i> Discount</button>
                     </div>
@@ -228,23 +162,23 @@
                         <tbody>
                             <tr>
                                 <td>Sub Total :</td>
-                                <td>{{quotation.sub_total}}</td>
+                                <td>{{invoice.sub_total}}</td>
                             </tr>
                             <tr>
                                 <td>Disocunt :</td>
-                                <td>{{quotation.discount}}</td>
+                                <td>{{invoice.discount}}</td>
                             </tr>
                             <tr>
                                 <td>Amount Paid :</td>
-                                <td>{{quotation.amount_paid}}</td>
+                                <td>{{invoice.amount_paid}}</td>
                             </tr>
                             <tr>
                                 <td>Amount Remaining :</td>
-                                <td>{{quotation.amount_remaining}}</td>
+                                <td>{{invoice.amount_remaining}}</td>
                             </tr>
                             <tr>
                                 <td>Grand Total :</td>
-                                <td>{{quotation.grand_total}}</td>
+                                <td>{{invoice.grand_total}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -253,5 +187,7 @@
         </div>
     </div>
 </div>
+
+
 
 {% endblock %}

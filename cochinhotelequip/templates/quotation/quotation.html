@@ -133,10 +133,9 @@
                                     {% csrf_token %}
                                     <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                                         <input class="form-control bg-dark border-0 w-75" name="amount" type="number"
-                                            value="{{ quotation.amount_remaining}}"
-                                            placeholder="{{quotation.amount_remaining}}">
+                                            value="{{ quotation.amount_remaining}}" min=1>
                                         <!--page value-->
-                                        <input type='text' value='{{ quotation_list.number }}' name='page_value' style='display: none'
+                                        <input type='text' value='{{ quotation_list.number }}' name='page_value' style='display: none'>
                                     </div>
 
                                     <div class="modal-footer border-0">
