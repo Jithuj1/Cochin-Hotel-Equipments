@@ -57,9 +57,10 @@ def add_discount(request, invoice_id):
     if request.method == 'POST':
 
         discount = request.POST.get('discount')
+        discount = int(discount.split(".")[0])
 
         invoice = Invoice.objects.get(id=invoice_id)
-        if int(discount) > invoice.amount_remaining:
+        if discount > invoice.amount_remaining:
             messages.error(request, "You can't provide discount more than amount remaining")
             return redirect('view_invoice', invoice)
         invoice.discount = discount
@@ -73,12 +74,13 @@ def add_discount(request, invoice_id):
 @login_required(login_url='login')
 def make_payment(request, invoice_id):
     if request.method == 'POST':
-        amount = int(request.POST.get('amount'))
+        amount = request.POST.get('amount')
+        amount = amount.split(".")[0]
         page_number = request.GET.get('page')
 
         invoice = Invoice.objects.get(id=invoice_id)
 
-        response = invoice.make_payment(amount)
+        response = invoice.make_payment(int(amount))
 
         if not response["status"] :
             messages.warning(request, response["message"])

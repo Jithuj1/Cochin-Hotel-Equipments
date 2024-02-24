@@ -210,7 +210,8 @@ def change_delivery_address(request, quotation_id, customer_id, address_id):
 def add_discount(request, quotation_id, customer_id):
     if request.method == 'POST':
 
-        discount = int(request.POST.get('discount'))
+        discount = request.POST.get('discount')
+        discount = int(discount.split(".")[0])
 
         quotation = Invoice.objects.get(id=quotation_id)
         if discount > quotation.amount_remaining:
@@ -227,12 +228,13 @@ def add_discount(request, quotation_id, customer_id):
 @login_required(login_url='login')
 def make_payment(request, quotation_id):
     if request.method == 'POST':
-        amount = int(request.POST.get('amount'))
+        amount = request.POST.get('amount')
+        amount = amount.split(".")[0]
         page_number = int(request.POST.get('page_value'))
 
         quotation = Invoice.objects.get(id=quotation_id)
 
-        response = quotation.make_payment(amount)
+        response = quotation.make_payment(int(amount))
 
         if not response["status"] :
             messages.error(request, response["message"])
