@@ -27,13 +27,15 @@
     <header class="header">
         <div>
             <h2> Cochin Hotel Equipments </h3>
-                <p> Quotation Confirmation Form </p>
+                
                 {% if quotation.is_quotation %}
+                <p> Quotation Confirmation Form </p>
                 <div style="font-size: 10px;">
                     <p style="margin-top: 10px;">Quotation Date : {{quotation.quotation_date}}</p>
-                    <p>Quotation No &nbsp; &nbsp;: {{quotation.quotation_num}}</p>
+                    <p>Quotation No &nbsp; &nbsp; : {{quotation.invoice_num}}</p>
                 </div>
                 {% else %}
+                <p> Order Confirmation Form </p>
                 <div style="font-size: 10px;">
                     <p style="margin-top: 10px;">Invoice Date : {{quotation.invoice_date}}</p>
                     <p>Invoice No &nbsp; &nbsp;: {{quotation.invoice_num}}</p>
