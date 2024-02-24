@@ -138,7 +138,7 @@
                                     <div class="modal-footer border-0">
                                         <button type="button" class="btn btn-secondary"
                                             data-dismiss="modal">Cancel</button>
-                                        <a href="{% url 'delete_category' category.id %}"
+                                        <a href="{% url 'delete_category' category.id %}?page={{ category_list.number }}"
                                             class="btn btn-danger">Delete</a>
                                     </div>
                                 </div>

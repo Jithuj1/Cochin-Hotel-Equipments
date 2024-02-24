@@ -107,11 +107,13 @@ def add_product(request):
 @login_required(login_url='login')
 def delete_product(request, product_id):
     try:
+        page_number =  request.GET.get('page')
+
         Product.objects.get(id=product_id).delete()
     except  ProtectedError:
         messages.warning(request, "Cannot delete this product because it is referenced by other objects.")
 
-    return redirect('product')
+    return redirect(reverse('product')+f'?page={page_number}')
 
 
 @login_required(login_url='login')
