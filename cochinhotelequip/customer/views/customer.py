@@ -143,12 +143,14 @@ def delete_address(request, address_id):
 
 @login_required(login_url='login')
 def view_customer(request, customer_id):
+    page_number =  request.GET.get('page')
     customer = User.objects.filter(id=customer_id).first()
     address_list = Address.objects.filter(customer = customer)
     context = {
         "customer":customer,
         "address_list":address_list,
-        "active_page":"customer"
+        "active_page":"customer",
+        'page_number': page_number
     }
     return render(request, 'customer/view_customer.html', context)
 
