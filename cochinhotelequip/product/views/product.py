@@ -121,7 +121,6 @@ def update_product(request, product_id):
 
    
     page_number =  request.GET.get('page')
-    print("page", page_number)
 
     product = Product.objects.filter(id=product_id).first()
     category_list = Category.objects.all()
@@ -187,7 +186,6 @@ def update_product(request, product_id):
         product.category = new_category
 
         product.save()
-        print('post', page_number)
         return redirect(reverse('product')+f'?page={page_number}')
 
         

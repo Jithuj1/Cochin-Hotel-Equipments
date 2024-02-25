@@ -1,13 +1,23 @@
 from pathlib import Path
 import os
+import environ
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-mv@5nph%m9%7!iz7az#fn=y*u!m#+x#h9x-gsem3gr%#!9uavl'
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
-DEBUG = True
+# setting .env is placed in root directory
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-ALLOWED_HOSTS = []
+SECRET_KEY = env("SECRET_KEY")
+
+DEBUG = env("DEBUG")
+
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(",")
 
 
 INSTALLED_APPS = [
@@ -18,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #custom apps
+    # custom apps
     'home',
     'user',
     'account',
@@ -61,15 +71,16 @@ WSGI_APPLICATION = 'cochinhotelequip.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'che2',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": env("DB_ENGINE"),
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -99,7 +110,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS =[os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -107,5 +118,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_AGE = 86400
 
-# store details 
+# store details
 STORE_ADDRESS = {"state": "Kerala", "country": "India"}
