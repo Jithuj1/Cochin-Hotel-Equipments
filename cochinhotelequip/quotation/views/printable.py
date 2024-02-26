@@ -6,7 +6,6 @@ from account.models.address import Address
 from django.http import HttpResponse
 import pdfkit
 from django.template.loader import get_template
-import tempfile
 
 
 @login_required(login_url='login')
@@ -48,34 +47,20 @@ def generate_quotation_pdf(request, quotation_id):
     }
 
     body_html = get_template('printable/quotation.html')
-    footer_template = get_template('printable/footer.html')
-    header_template = get_template('printable/header.html')
-    footer_file =  footer_template.render(footer_context)
-    header_file =  header_template.render(header_context)
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as footer_html_file:
-        footer_html_file.write(footer_file.encode("utf-8"))
-        footer_file_path = footer_html_file.name
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as header_html_file:
-        header_html_file.write(header_file.encode("utf-8"))
-        header_file_path = header_html_file.name
 
     html = body_html.render(context)
 
     pdf_options = {
         "page-size": "A4",
-        "margin-top": "1.85in",
+        "margin-top": "0.25in",
         "margin-right": "0.25in",
-        "margin-bottom": "0.75in",
+        "margin-bottom": "0.25in",
         "margin-left": "0.25in",
         "encoding": "UTF-8",
         # "disable-smart-shrinking": None,
         # "enable-local-file-access": None,
         # "--keep-relative-links": "",
         "dpi": 500,
-        "footer-html": footer_file_path,
-        "header-html": header_file_path,
     }
 
     pdf_file = pdfkit.from_string(
