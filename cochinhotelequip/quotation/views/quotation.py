@@ -29,7 +29,7 @@ def quotation(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(quotation_list, 2)
+    paginator = Paginator(quotation_list, 15)
     try:
         quotation_list = paginator.page(page)
     except PageNotAnInteger:
