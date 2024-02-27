@@ -141,7 +141,7 @@ def delete_address(request, address_id):
         address.delete()
     except ProtectedError:
         print(ProtectedError)
-
+    print('page',page_number)
     url = reverse('view_customer', kwargs={'customer_id': address.customer.id}) +f'?page={page_number}'
     return redirect(url)
 
