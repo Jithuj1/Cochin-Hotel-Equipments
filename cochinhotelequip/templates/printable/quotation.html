@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    {% if is_quotation %}
     <title>Quotation Details</title>
+    {% else %}
+    <title>Invoice Details</title>
+    {% endif %}
     <style>
         .page {
             page-break-inside: avoid;
@@ -110,7 +114,7 @@
             border-left: 1px solid #c4c4c4;
             padding: 10px;
             width: 30%;
-        }
+            }
 
         .price-details .price-list .price {
             display: -webkit-box;
@@ -123,6 +127,16 @@
         .price-details .terms-conditions {
             padding: 10px;
             font-size: 12px;
+            width: 30%;
+            text-align: left;
+        }
+
+        .price-details .bank-details {
+            border-left: 1px solid #c4c4c4;
+            width: 30%;
+            padding: 10px;
+            font-size: 12px;
+            text-align: left;
         }
 
         .signature {
@@ -150,11 +164,19 @@
     <header class="header">
         <div>
             <h2> Cochin Hotel Equipments </h3>
+                {% if is_quotation %}
                 <p> Quotation Confirmation Form </p>
                 <div style="font-size: 12px;">
                     <p style="margin-top: 10px;">Quotation Date : {{quotation.quotation_date}}</p>
                     <p>Quotation No &nbsp; &nbsp; : {{quotation.invoice_num}}</p>
                 </div>
+                {% else %}
+                <p> Bill of Supply (Invoice)</p>
+                <div style="font-size: 12px;">
+                    <p style="margin-top: 10px;">Invoice Date : {{quotation.invoice_date}}</p>
+                    <p>Invoice No &nbsp; : {{quotation.invoice_num}}</p>
+                </div>
+                {% endif %}
         </div>
         <div style="font-size: 12px; margin-right: 25px;">
             <div>
@@ -244,13 +266,25 @@
         <div class="page">
             <section class="price-details">
                 <div class="terms-conditions">
+                    {% if is_quotation %}
                     <div>
                         <h5>Terms And Conditions</h5>
                         <p>1). Quotation validity: 30 days</p>
                         <p>2). Transportation & unloading charges extra</p>
                         <p>3). 100 % payment against supply of material.</p>
                     </div>
+                    {% endif %}
                 </div>
+                {% if is_quotation %}
+                <div class="bank-details">
+                    <h5>Bank Details</h5>
+                    <p>A.Holder Name : {{bank_details.account_holder}}</p>
+                    <p>Account No : {{bank_details.acc_no}}</p>
+                    <p>IFSC : {{bank_details.ifsc}}</p>
+                    <p>Branch : {{bank_details.branch}}</p>
+                    <p>Bank : {{bank_details.bank_name}}</p>
+                </div>
+                {% endif %}
                 <div class="price-list">
                     <div class="price">
                         <div>Sub Total : </div>

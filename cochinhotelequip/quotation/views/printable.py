@@ -29,21 +29,32 @@ def generate_quotation_pdf(request, quotation_id):
         "zipcode":"680503",
         "phone":"+91 7034222220"
     }
+    
+    bank_details_thirssur = {
+        "account_holder": "Vineesh Thomas",
+        "acc_no":"626405021352",
+        "bank_name":"ICICI Bank Ltd",
+        "branch":"EDAPALLYERNAKULAM",
+        "ifsc":"ICIC0006264"
+    }
+
+    bank_details_ernakulam = {
+        "account_holder": "COCHIN HOTEL EQUIPMENTS",
+        "acc_no":"10120200026759",
+        "bank_name":"FEDERALBANK",
+        "branch":"KALAMASSERY Br.[Kl]",
+        "ifsc":"FDRL0001012"
+    }
+
     context = {
+        "is_quotation":quotation.is_quotation,
         "quotation": quotation,
         "customer_address": customer_address,
         "quotation_items":quotation_items,
         "customer": customer_address.customer,
         "total_gst": quotation.tax_igst_total + quotation.tax_cgst_total + quotation.tax_sgst_total,
-        "company_address": company_address_ernakulam if quotation.store == "ERNAKULAM" else company_address_thissur
-    }
-
-    header_context = {
-        "quotation": quotation,
-        "date":quotation.quotation_date if quotation.is_quotation else quotation.invoice_date
-    }
-    footer_context = {
-        "store": True if quotation.store == "ERNAKULAM" else False
+        "company_address": company_address_ernakulam if quotation.store == "ERNAKULAM" else company_address_thissur,
+        "bank_details": bank_details_ernakulam if quotation.store == "ERNAKULAM" else bank_details_thirssur
     }
 
     body_html = get_template('printable/quotation.html')
@@ -57,9 +68,6 @@ def generate_quotation_pdf(request, quotation_id):
         "margin-bottom": "0.25in",
         "margin-left": "0.25in",
         "encoding": "UTF-8",
-        # "disable-smart-shrinking": None,
-        # "enable-local-file-access": None,
-        # "--keep-relative-links": "",
         "dpi": 500,
     }
 

@@ -25,16 +25,13 @@
 <div class="container-fluid pt-4 px-4">
     <div class="bg-secondary text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
-            <h6 class="mb-0">All Products</h6>
+            <h6 class="mb-0">All Invoices</h6>
             <form class="d-none d-md-flex ms-4" method="post" action="{% url 'product' %}">
                 {% csrf_token %}
                 <input class="form-control bg-dark border-0" name="search" type="search" placeholder="Search">
                 <button class="btn btn-success"
                     style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
             </form>
-            <a class="btn btn-success"
-                style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
-                href="{% url 'new_product' %}">Add product</a>
         </div>
         <div class="table-responsive">
             <table class="table text-start align-middle table-bordered table-hover mb-0" style="font-size: 14px;">

@@ -59,7 +59,7 @@ def add_product(request):
         category = request.POST.get('category')
         remarks = request.POST.get('remarks')
 
-        if product_name == "" or hsn_code == "" or tax_perc == "" or category=="":
+        if product_name == "" or hsn_code == "" or category=="":
             messages.error(request, "product_name, hsn_code, category and tax_perc can't be blank")
             return redirect('new_product')
         try:
