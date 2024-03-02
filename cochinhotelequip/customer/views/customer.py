@@ -125,20 +125,24 @@ def delete_customer(request, customer_id):
 
 @login_required(login_url='login')
 def delete_address(request, address_id):
+    page_number =  request.GET.get('page')
+
     address = Address.objects.get(id=address_id)
     other_address = Address.objects.filter(customer=address.customer).exclude(id=address_id).first()
     if not other_address:
         messages.error(request, "customer don't have any other address, please create one before deleting")
-        url = reverse('view_customer', kwargs={'customer_id': address.customer.id})
+        url = reverse('view_customer', kwargs={'customer_id': address.customer.id}) +f'?page={page_number}'
         return redirect(url)
     
     if address.is_default:
         other_address.is_default = True
         other_address.save()
-    
-    address.delete()
-
-    url = reverse('view_customer', kwargs={'customer_id': address.customer.id})
+    try:
+        address.delete()
+    except ProtectedError:
+        print(ProtectedError)
+    print('page',page_number)
+    url = reverse('view_customer', kwargs={'customer_id': address.customer.id}) +f'?page={page_number}'
     return redirect(url)
 
 @login_required(login_url='login')
