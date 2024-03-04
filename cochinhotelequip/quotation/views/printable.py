@@ -19,7 +19,8 @@ def generate_quotation_pdf(request, quotation_id):
         "city":"Kunnamkulam Rd, Thirssur",
         "state":"Kerala",
         "zipcode":"680503",
-        "phone":"+91 7034222220"
+        "phone":"+91 7034222220",
+        "email":"chest2021@gmail.com"
     }
     company_address_ernakulam = {
         "street1": "Muttam, Choornikara",
@@ -27,7 +28,8 @@ def generate_quotation_pdf(request, quotation_id):
         "city":"Ernakulam",
         "state":"Kerala",
         "zipcode":"680503",
-        "phone":"+91 7034222220"
+        "phone":"+91 7034222220",
+        "email":"chest2021@gmail.com"
     }
     
     bank_details_thirssur = {
