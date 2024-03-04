@@ -72,7 +72,7 @@ def select_customer(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(customers, 2)
+    paginator = Paginator(customers, 15)
     try:
         customers = paginator.page(page)
     except PageNotAnInteger:
