@@ -97,13 +97,8 @@
                                         <div class="input-group mb-3">
 
                                             {% csrf_token %}
-                                            <select name="unit" class="custom-select form-select"
-                                                id="inputGroupSelect01" style="text-align: right;width:12vw">
-                                                <option value='' selected>Choose...</option>
-                                                {% for product in products%}
-                                                <option value="{{product.id}}">{{product.name}}</option>
-                                                {% endfor %}
-                                            </select>
+                                            <input type='text' name='productName'  id='productInput' />
+                                            <ul class='list'></ul>
                                             <div class="input-group-append">
                                                 <button class="btn btn-success" type="submit">Add </button>
                                             </div>
@@ -253,5 +248,44 @@
         </div>
     </div>
 </div>
+<
+<script>
+    // product name list
+    let product_list = []
 
+    let input = document.getElementById('productInput')
+
+    
+    {% for product in products %}
+        product_list.push('{{product.name}}')
+    {% endfor %}
+
+    let sortedProductName = product_list.sort()
+    console.log(sortedProductName)
+
+    input.addEventListener('keyup', (e) => {
+        removeElements()
+        for(let i of sortedProductName){
+            if(i.toLowerCase().startsWith(input.value.toLowerCase()) && input.value != ''){
+                let listItem =  document.createElement('li')
+                listItem.classList.add('list-items')
+                listItem.style.cursor = 'pointer';
+                listItem.setAttribute('onclick', "displayNames('" + i + "')")
+
+                let word = "<b>" + i.substr(0, input.value.length) + "</b>"
+                word += i.substr(input.value.length)
+                listItem.innerHTML = word
+                document.querySelector(".list").appendChild(listItem)
+
+            }
+        }
+
+    })
+   function removeElements(){
+    let items = document.querySelectorAll(".list-items")
+    items.forEach((item)=>{
+        item.remove()
+    })
+   }
+</script>
 {% endblock %}
