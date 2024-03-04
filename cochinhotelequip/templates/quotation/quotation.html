@@ -86,7 +86,7 @@
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;"
                                 href="{% url 'add_quotation_item' quotation.id quotation.customer.id %}"><i
                                     class="fas fa-eye"></i></a>
-                            <a class="btn btn-sm btn-success" style="margin-left: 5px;" id="downloadPdfButton"><i
+                            <a class="btn btn-sm btn-success" style="margin-left: 5px;" onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}')"><i
                                     class="far fa-file-pdf"></i></a>
                             <button class="btn btn-sm"
                                 style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
@@ -150,22 +150,7 @@
                         </div>
                     </div>
 
-                    <!-- script for downloading pdf -->
-                    <script>
-                        document.getElementById('downloadPdfButton').addEventListener('click', function () {
-                            // Make a request to the Django view that generates the PDF
-                            fetch('{% url "generate_quotation_pdf" quotation_id=quotation.id %}')
-                                .then(response => response.blob())
-                                .then(blob => {
-                                    // Create a link and trigger the download
-                                    const link = document.createElement('a');
-                                    link.href = window.URL.createObjectURL(blob);
-                                    link.download = '{{quotation.invoice_num}}.pdf';
-                                    link.click();
-                                });
-                        });
-                    </script>
-                    <!-- end of scripts -->
+                  
 
                     {% endfor %}
                 </tbody>
@@ -198,6 +183,24 @@
 <div id='toastbox'>
 
 </div>
+
+  <!-- script for downloading pdf -->
+  <script>
+    function downloadPdf(id, invoice_number) {
+        const url = '{% url "generate_quotation_pdf" quotation_id=0 %}'.replace('0', id)
+        // Make a request to the Django view that generates the PDF
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                // Create a link and trigger the download
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `${invoice_number}.pdf`;
+                link.click();
+            });
+    }
+</script>
+<!-- end of scripts -->
 
 <!-- scripts for modal -->
 <script>
