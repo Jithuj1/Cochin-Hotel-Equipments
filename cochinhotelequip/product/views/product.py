@@ -86,6 +86,9 @@ def add_product(request):
         if not category_obj:
             messages.error(request, "Category not found")
             return redirect('new_product')
+        if Product.objects.filter(name__iexact=product_name, hsn_code__iexact=hsn_code).first():
+            messages.error(request, 'Product already exists')
+            return redirect('new_product')
         try:
             product = Product.objects.create(
                 name = product_name,
