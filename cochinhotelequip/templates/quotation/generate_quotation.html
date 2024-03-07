@@ -30,6 +30,22 @@
     #yourTableId {
         -ms-overflow-style: none;
     }
+    ul{
+        list-style: none;
+        padding:0;
+    }
+    .list{
+        width: 100%;
+        background-color: #252525;
+        position: absolute;
+    }
+    .list-items{
+        padding: 12px;
+
+    }
+    .list-items:hover {
+        background-color: rgb(76, 95, 111);
+      }
 </style>
 <!-- end of style -->
 
@@ -93,16 +109,21 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <h6 class="mb-4">Quotation Products</h6>
                                 <div class="form-floating mb-3">
-                                    <form method='post'>
+                                    <form method='post' action="{% url 'add_quotation_item' quotation.id customer.id %}">
+                                        
                                         <div class="input-group mb-3">
 
                                             {% csrf_token %}
-                                            <input type='text' name='productName'  id='productInput' />
+                                            <div style='position:relative'>
+                                                <input class="form-control bg-dark border-0 shadow-none" type='text' name='productName' style="display:none" id='productInputHidden' />
+
+                                            <input class="form-control bg-dark border-0 shadow-none" type='text'   id='productInput' />
                                             <ul class='list'></ul>
+                                            </div>
                                             <div class="input-group-append">
                                                 <button class="btn btn-success" type="submit">Add </button>
                                             </div>
-                                    </form>
+                                        </form>
                                 </div>
                             </div>
                         </div>
@@ -248,39 +269,65 @@
         </div>
     </div>
 </div>
-<
 <script>
-    // product name list
-    let product_list = []
+    // Initialize an empty array to store product objects
+    let product_list = [];
 
-    let input = document.getElementById('productInput')
-
-    
+    // Iterate over products and dynamically create JavaScript objects
     {% for product in products %}
-        product_list.push('{{product.name}}')
+        product_list.push({
+            name: '{{ product.name }}',
+            id: '{{ product.id }}',
+            // Add more fields as needed
+        });
     {% endfor %}
 
-    let sortedProductName = product_list.sort()
-    console.log(sortedProductName)
+    // Sort the product list alphabetically by product name
+    product_list.sort((a, b) => a.name.localeCompare(b.name));
 
+    // Log the sorted product list to the console
+    console.log(product_list);
+
+    // Get the input element
+    let input = document.getElementById('productInput');
+    let inputHidden = document.getElementById('productInputHidden')
+
+    // Add event listener for keyup event on input
     input.addEventListener('keyup', (e) => {
-        removeElements()
-        for(let i of sortedProductName){
-            if(i.toLowerCase().startsWith(input.value.toLowerCase()) && input.value != ''){
-                let listItem =  document.createElement('li')
-                listItem.classList.add('list-items')
+        // Remove existing list items
+        removeElements();
+
+        // Iterate over the sorted product list
+        for (let product of product_list) {
+            // Check if the product name starts with the input value (case-insensitive)
+            if (product.name.toLowerCase().startsWith(input.value.toLowerCase()) && input.value !== '') {
+                // Create a new list item
+                let listItem = document.createElement('li');
+                listItem.classList.add('list-items');
                 listItem.style.cursor = 'pointer';
-                listItem.setAttribute('onclick', "displayNames('" + i + "')")
+                listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
 
-                let word = "<b>" + i.substr(0, input.value.length) + "</b>"
-                word += i.substr(input.value.length)
-                listItem.innerHTML = word
-                document.querySelector(".list").appendChild(listItem)
+                // Highlight the matching part of the product name
+                let highlightedName = `<b>${product.name.substr(0, input.value.length)}</b>${product.name.substr(input.value.length)}`;
 
+                // Set the inner HTML of the list item
+                listItem.innerHTML = highlightedName;
+
+                // Append the list item to the list container
+                document.querySelector('.list').appendChild(listItem);
             }
         }
+    });
 
-    })
+    // Function to remove existing list items
+    
+
+    function displayNames(value_name,value_id){
+        input.value = value_name
+        inputHidden.value = value_id
+        removeElements()
+    }
+
    function removeElements(){
     let items = document.querySelectorAll(".list-items")
     items.forEach((item)=>{
