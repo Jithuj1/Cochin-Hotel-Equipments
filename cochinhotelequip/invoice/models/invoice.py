@@ -82,7 +82,7 @@ class Invoice(BaseModel):
         current_invoice_num = (
             highest_invoice_num_obj.invoice_num_seq if highest_invoice_num_obj.invoice_num_seq else 1
         )
-
+        self.invoice_num_fiscalyr = fiscal_year_code
         new_invoice_num_seq = current_invoice_num
 
         while True:

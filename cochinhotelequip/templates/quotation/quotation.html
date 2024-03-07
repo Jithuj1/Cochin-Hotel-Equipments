@@ -7,35 +7,36 @@
 
 {% block content %}
 <style>
-    #toastbox{
-      position: absolute;
-      bottom: 30px;
-      right: 30px;
-      display: flex;
-      align-items: flex-end;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 20px;
-      }
-      
-      
-      .alert::after{
+    #toastbox {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 20px;
+    }
+
+
+    .alert::after {
         content: '';
         position: absolute;
-        left:0;
-        bottom:0;
+        left: 0;
+        bottom: 0;
         width: 100%;
         height: 5px;
         background: red;
         animation: anim 6s linear forwards;
-      }
-      @keyframes anim {
-        100%{
-          width: 0;
+    }
+
+    @keyframes anim {
+        100% {
+            width: 0;
         }
-      }
-  </style>
-  
+    }
+</style>
+
 
 <!-- Recent Sales Start -->
 <div class="container-fluid pt-4 px-4">
@@ -82,12 +83,15 @@
                         <td>{{ quotation.amount_remaining }}</td>
                         <td class='d-flex'>
                             <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal"
-                                data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+                                data-target="#deleteModal{{quotation.id}}"><i class="fas fa-trash-alt"></i></button>
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;"
                                 href="{% url 'add_quotation_item' quotation.id quotation.customer.id %}"><i
                                     class="fas fa-eye"></i></a>
-                            <a class="btn btn-sm btn-success" style="margin-left: 5px;" onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}')"><i
-                                    class="far fa-file-pdf"></i></a>
+                            <button class="btn btn-sm btn-success" style="margin-left: 10px;" data-toggle="modal"
+                                data-target="#pdfModal{{quotation.id}}"><i class="fas fa-file-pdf"></i></button>
+                            <!-- <a class="btn btn-sm btn-success" style="margin-left: 5px;"
+                                onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}')"><i
+                                    class="far fa-file-pdf"></i></a> -->
                             <button class="btn btn-sm"
                                 style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
                                 data-toggle="modal" data-target="#makePaymentModal{{quotation.id}}"><i
@@ -96,17 +100,17 @@
                     </tr>
 
                     <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="deleteModal{{quotation.id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel{{quotation.id}}" aria-hidden="true">
                         <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
                             role="document">
                             <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                                 <div class="modal-header border-0">
-                                    <h5 class="modal-title" id="deleteModalLabel">Delete Quotaion</h5>
+                                    <h5 class="modal-title">Delete Quotaion</h5>
 
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you sure, you want to delete this quotation permanently ?</p>
+                                    <p>Are you sure, you want to delete this quotation permanently ?{{quotation.invoice_num}}</p>
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -117,6 +121,31 @@
                         </div>
                     </div>
                     <!-- end of delete modal -->
+
+                    <!-- Pdf Modal -->
+                    <div class="modal fade" id="pdfModal{{quotation.id}}" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel{{quotation.id}}"
+                        aria-hidden="true">
+                        <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
+                            role="document">
+                            <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Select PDF</h5>
+
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-success"
+                                        style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
+                                        data-dismiss="modal"
+                                        onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}')">Without
+                                        Seal</button>
+                                    <button onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}', true)" class="btn btn-success" data-dismiss="modal"
+                                        style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);">With
+                                        Seal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of pdf modal -->
 
                     <!-- make payment modal -->
                     <div class="modal fade" id="makePaymentModal{{ quotation.id }}" tabindex="-1" role="dialog"
@@ -135,7 +164,8 @@
                                         <input class="form-control bg-dark border-0 w-75" name="amount" type="number"
                                             value="{{ quotation.amount_remaining}}" min=1>
                                         <!--page value-->
-                                        <input type='text' value='{{ quotation_list.number }}' name='page_value' style='display: none'>
+                                        <input type='text' value='{{ quotation_list.number }}' name='page_value'
+                                            style='display: none'>
                                     </div>
 
                                     <div class="modal-footer border-0">
@@ -150,7 +180,7 @@
                         </div>
                     </div>
 
-                  
+
 
                     {% endfor %}
                 </tbody>
@@ -184,12 +214,16 @@
 
 </div>
 
-  <!-- script for downloading pdf -->
-  <script>
-    function downloadPdf(id, invoice_number) {
-        const url = '{% url "generate_quotation_pdf" quotation_id=0 %}'.replace('0', id)
+<!-- script for downloading pdf -->
+<script>
+    function downloadPdf(id, invoice_number, withSeal) {
+        const url = '{% url "generate_quotation_pdf" quotation_id=0 %}'.replace('0', id);
+
+        // Add the withSeal parameter to the URL
+        const finalUrl = withSeal ? `${url}?seal=true` : url;
+
         // Make a request to the Django view that generates the PDF
-        fetch(url)
+        fetch(finalUrl)
             .then(response => response.blob())
             .then(blob => {
                 // Create a link and trigger the download
@@ -200,29 +234,30 @@
             });
     }
 </script>
+
 <!-- end of scripts -->
 
 <!-- scripts for modal -->
 <script>
-  // get the toastbox element
-  let toastBox = document.getElementById('toastbox')
-  {% if messages %}
-  {% for message in messages %}
-  showToast('{{ message }}')
-  {% endfor %}
-  {% endif %}
-function showToast(message){
-  console.log('iamin')
-  let toast = document.createElement('div')
-  
-  toast.classList.add('alert','alert-danger')
-  toast.innerHTML = message
-  toastBox.appendChild(toast);
+    // get the toastbox element
+    let toastBox = document.getElementById('toastbox')
+    {% if messages %}
+    {% for message in messages %}
+    showToast('{{ message }}')
+    {% endfor %}
+    {% endif %}
+    function showToast(message) {
+        console.log('iamin')
+        let toast = document.createElement('div')
 
-  // after 6s toast will remove
-  setTimeout(()=>{
-    toast.remove()
-  }, 6000)
-}
+        toast.classList.add('alert', 'alert-danger')
+        toast.innerHTML = message
+        toastBox.appendChild(toast);
+
+        // after 6s toast will remove
+        setTimeout(() => {
+            toast.remove()
+        }, 6000)
+    }
 </script>
 {% endblock %}

@@ -10,6 +10,7 @@ from django.template.loader import get_template
 
 @login_required(login_url='login')
 def generate_quotation_pdf(request, quotation_id):
+    with_seal = request.GET.get('seal', False)
     quotation = Invoice.objects.get(id=quotation_id)
     customer_address = Address.objects.get(id=quotation.address.id)
     quotation_items = InvoiceItem.objects.filter(invoice = quotation).order_by('created_at')
@@ -20,7 +21,7 @@ def generate_quotation_pdf(request, quotation_id):
         "state":"Kerala",
         "zipcode":"680503",
         "phone":"+91 7034222220",
-        "email":"chest2021@gmail.com"
+        "email":"cochinhotelequipments2209@gmail.com"
     }
     company_address_ernakulam = {
         "street1": "Muttam, Choornikara",
@@ -28,8 +29,8 @@ def generate_quotation_pdf(request, quotation_id):
         "city":"Ernakulam",
         "state":"Kerala",
         "zipcode":"680503",
-        "phone":"+91 7034222220",
-        "email":"chest2021@gmail.com"
+        "phone":"+91 7034222200",
+        "email":"cochinhotelequipments2209@gmail.com"
     }
     
     bank_details_thirssur = {
@@ -49,6 +50,7 @@ def generate_quotation_pdf(request, quotation_id):
     }
 
     context = {
+        "seal":with_seal,
         "is_quotation":quotation.is_quotation,
         "quotation": quotation,
         "customer_address": customer_address,

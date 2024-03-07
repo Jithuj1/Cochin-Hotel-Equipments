@@ -63,11 +63,12 @@
                         <td>{{ invoice.amount_remaining }}</td>
                         <td>
                             <button class="btn btn-sm btn-danger" style="margin-left: 10px;" data-toggle="modal"
-                                data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
+                                data-target="#deleteModal{{invoice.id}}"><i class="fas fa-trash-alt"></i></button>
                             <a class="btn btn-sm btn-success" style="margin-left: 5px;"
                                 href="{% url 'view_invoice' invoice.id  %}?page={{ invoice_list.number }}"><i
                                     class="fas fa-eye"></i></a>
-                            <a class="btn btn-sm btn-success" style="margin-left: 5px;" onclick="downloadPdf('{{invoice.id}}', '{{invoice.invoice_num}}')"><i
+                            <a class="btn btn-sm btn-success" style="margin-left: 5px;" data-toggle="modal"
+                            data-target="#pdfModal{{invoice.id}}"><i
                                     class="far fa-file-pdf"></i></a>
                             <button class="btn btn-sm"
                                 style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
@@ -76,18 +77,43 @@
                         </td>
                     </tr>
 
-                    <!-- Delete Modal -->
-                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <!-- Pdf Modal -->
+                    <div class="modal fade" id="pdfModal{{invoice.id}}" tabindex="-1" role="dialog" aria-labelledby="pdfModalLabel{{invoice.id}}"
+                        aria-hidden="true">
                         <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
                             role="document">
                             <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                                 <div class="modal-header border-0">
-                                    <h5 class="modal-title" id="deleteModalLabel">Delete Invoice</h5>
+                                    <h5 class="modal-title">Select PDF</h5>
+
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-success"
+                                        style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
+                                        data-dismiss="modal"
+                                        onclick="downloadPdf('{{invoice.id}}', '{{invoice.invoice_num}}')">Without
+                                        Seal</button>
+                                    <button onclick="downloadPdf('{{invoice.id}}', '{{invoice.invoice_num}}', true)" class="btn btn-success" data-dismiss="modal"
+                                        style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);">With
+                                        Seal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of pdf modal -->
+
+                    <!-- Delete Modal -->
+                    <div class="modal fade" id="deleteModal{{invoice.id}}" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel{{invoice.id}}" aria-hidden="true">
+                        <div class="modal-dialog w-100 h-75 d-flex align-items-center justify-content-center"
+                            role="document">
+                            <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title">Delete Invoice</h5>
 
                                 </div>
                                 <div class="modal-body">
-                                    <p>Are you sure, you want to delete this invoice permanently ?</p>
+                                    <p>Are you sure, you want to delete this invoice permanently ?{{invoice.invoice_num}}</p>
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -163,12 +189,16 @@
 
 </div>
 
+<!-- scripts for download pdf -->
 <script>
-    function downloadPdf (id,invoice_number) {
-        console.log('id',id)
-        const url = '{% url "generate_quotation_pdf" quotation_id=0 %}'.replace("0", id)
+    function downloadPdf(id, invoice_number, withSeal) {
+        const url = '{% url "generate_quotation_pdf" quotation_id=0 %}'.replace('0', id);
+
+        // Add the withSeal parameter to the URL
+        const finalUrl = withSeal ? `${url}?seal=true` : url;
+        console.log({{invoice.id}})
         // Make a request to the Django view that generates the PDF
-       fetch(url)
+        fetch(finalUrl)
             .then(response => response.blob())
             .then(blob => {
                 // Create a link and trigger the download
