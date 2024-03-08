@@ -270,7 +270,6 @@
     </div>
 </div>
 <script>
-    // Initialize an empty array to store product objects
     let product_list = [];
 
     // Iterate over products and dynamically create JavaScript objects
@@ -278,17 +277,13 @@
         product_list.push({
             name: '{{ product.name }}',
             id: '{{ product.id }}',
-            // Add more fields as needed
         });
     {% endfor %}
 
     // Sort the product list alphabetically by product name
     product_list.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Log the sorted product list to the console
-    console.log(product_list);
 
-    // Get the input element
     let input = document.getElementById('productInput');
     let inputHidden = document.getElementById('productInputHidden')
 
@@ -297,21 +292,19 @@
         // Remove existing list items
         removeElements();
 
-        // Iterate over the sorted product list
         for (let product of product_list) {
-            // Check if the product name starts with the input value (case-insensitive)
-            if (product.name.toLowerCase().startsWith(input.value.toLowerCase()) && input.value !== '') {
+            if (product.name.toLowerCase().includes(input.value.toLowerCase()) && input.value !== '') {
                 // Create a new list item
                 let listItem = document.createElement('li');
                 listItem.classList.add('list-items');
                 listItem.style.cursor = 'pointer';
                 listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
 
-                // Highlight the matching part of the product name
-                let highlightedName = `<b>${product.name.substr(0, input.value.length)}</b>${product.name.substr(input.value.length)}`;
 
-                // Set the inner HTML of the list item
-                listItem.innerHTML = highlightedName;
+                // Highlight the matching part of the product name
+                let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+               listItem.innerHTML = highlightedName;
 
                 // Append the list item to the list container
                 document.querySelector('.list').appendChild(listItem);
@@ -319,15 +312,15 @@
         }
     });
 
-    // Function to remove existing list items
     
-
+    
     function displayNames(value_name,value_id){
         input.value = value_name
         inputHidden.value = value_id
         removeElements()
     }
-
+    
+    // Function to remove existing list items
    function removeElements(){
     let items = document.querySelectorAll(".list-items")
     items.forEach((item)=>{
