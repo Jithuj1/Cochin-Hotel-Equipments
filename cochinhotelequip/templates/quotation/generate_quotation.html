@@ -117,7 +117,7 @@
                                             <div style='position:relative'>
                                                 <input class="form-control bg-dark border-0 shadow-none" type='text' name='productName' style="display:none" id='productInputHidden' />
 
-                                            <input class="form-control bg-dark border-0 shadow-none" type='text'   id='productInput' />
+                                            <input class="form-control bg-dark border-0 shadow-none" type='text'   id='productInput'  placeholder="Search" autocomplete="off"/>
                                             <ul class='list'></ul>
                                             </div>
                                             <div class="input-group-append">
@@ -286,6 +286,37 @@
 
     let input = document.getElementById('productInput');
     let inputHidden = document.getElementById('productInputHidden')
+    
+    input.addEventListener('blur', () => {
+        // Remove existing list items
+        removeElements();
+    });
+
+    input.addEventListener('focus', (e) => {
+    console.log('input.value')
+        removeElements();
+        let maxValue = 6
+        let displayCount = 0
+        for (let product of product_list) {
+            if (displayCount < maxValue) {
+                // Create a new list item
+                let listItem = document.createElement('li');
+                listItem.classList.add('list-items');
+                listItem.style.cursor = 'pointer';
+                listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
+
+
+                // Highlight the matching part of the product name
+                let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+               listItem.innerHTML = highlightedName;
+
+                // Append the list item to the list container
+                document.querySelector('.list').appendChild(listItem);
+                displayCount++;
+            }
+        }
+    });
 
     // Add event listener for keyup event on input
     input.addEventListener('keyup', (e) => {
