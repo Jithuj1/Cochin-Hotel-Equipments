@@ -68,7 +68,7 @@
                 {% csrf_token %}
                 <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                     <input class="form-control bg-dark border-0 w-75" name="discount" type="number"
-                        value="{{ quotation.discount }}" min=1>
+                        value="{{ quotation.discount }}" min=0>
                 </div>
 
                 <div class="modal-footer border-0">

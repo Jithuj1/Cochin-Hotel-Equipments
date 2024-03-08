@@ -48,21 +48,19 @@ class Invoice(BaseModel):
 
     def generate_quotaion_num(self):
         fiscal_year_code = fiscal_year_4digit()
-
         highest_quotation_num_obj = (
             Invoice.objects.filter(invoice_num_fiscalyr=fiscal_year_code, is_quotation=True)
-            .order_by("-invoice_num_seq")
+            .order_by("-quotation_num_seq")
             .first()
         )
 
-        self.invoice_num_fiscalyr = fiscal_year_code
+        self.invoice_num_fiscalyr = fiscal_year_code if not self.invoice_num_fiscalyr else self.invoice_num_fiscalyr
 
         current_quotaion_num = (
             highest_quotation_num_obj.quotation_num_seq if highest_quotation_num_obj else 1
         )
 
         new_quotaion_num_seq = current_quotaion_num
-
         while True:
             self.quotation_num_seq = new_quotaion_num_seq
             try:
@@ -105,13 +103,45 @@ class Invoice(BaseModel):
         self.save()
 
     def make_payment(self, amount):
-        if self.amount_remaining < amount:
+        if self.amount_remaining == 0:
+                # already paid
+                response = {
+                    "status": False,
+                    "message": f'Already paid'
+                }
+                return response
+        if amount > 0 :
+            # paying for a invoice
+            if self.amount_remaining < amount:
+                response = {
+                    "status": False,
+                    "message":"Paying amount greater than remaining amount"
+                }
+                return response
+        elif amount == 0 :
+            # Entering zero for paying
             response = {
                 "status": False,
-                "message":"Paying amount greater than remaining amount"
+                "message":"Zero payment is not possible"
             }
             return response
-        
+        elif amount < 0:
+            # refunding from an invoice
+            if self.amount_remaining > 0 :
+                # amount remaining positive and trying to refund
+                response = {
+                    "status": False,
+                    "message": f'rupees of "{self.amount_remaining}", No refund available'
+                }
+                return response
+            if abs(self.amount_remaining) < abs(amount):
+                # trying to refund more amount
+                response = {
+                    "status": False,
+                    "message": f'You are only able to refund of rupees "{self.amount_remaining}"'
+                }
+                return response
+    
         self.amount_paid = self.amount_paid + amount
         self.amount_remaining = self.grand_total - self.amount_paid
         self.save()

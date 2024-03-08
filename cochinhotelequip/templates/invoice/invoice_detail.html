@@ -30,7 +30,6 @@
     #yourTableId {
         -ms-overflow-style: none;
     }
-
 </style>
 <!-- end of style -->
 
@@ -48,7 +47,7 @@
                 {% csrf_token %}
                 <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                     <input class="form-control bg-dark border-0 w-75" name="discount" type="number"
-                        value="{{ invoice.discount }}" min="1" step="1">
+                        value="{{ invoice.discount }}" min="0" step="1">
                 </div>
 
                 <div class="modal-footer border-0">
@@ -100,17 +99,36 @@
                                         <th style="width: 10%;" scope="col">Qty</th>
                                         <th style="width: 15%;" scope="col">Price</th>
                                         <th style="width: 15%;" scope="col">Sub Total</th>
+                                        <th style="width: 15%;" scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for item in invoice_items %}
-                                    <tr>
-                                        <td> {{forloop.counter}}</td>
-                                        <td> {{item.product.name }}</td>
-                                        <td> {{item.qty }}</td>
-                                        <td> {{item.rate }}</td>
-                                        <td> {{item.sub_total }}</td>
-                                    </tr>
+                                    <form method='post'
+                                        action="{% url 'edit_invoice_item' invoice.id item.id %}">
+                                        {% csrf_token %}
+                                        <tr>
+                                            <td> {{forloop.counter}}</td>
+                                            <td> {{item.product.name }}</td>
+                                            <td><input type='number' style="width:100%;"
+                                                    class="bg-secondary text-white border-0" name='quantity'
+                                                    value="{{item.qty}}" min='1' pattern='\d+'></td>
+                                            <td><input style="width:100%;" class="bg-secondary text-white border-0"
+                                                    type='number' size=5 value='{{item.rate}}' name='rate'></td>
+                                            <td> {{item.sub_total }}</td>
+                                            <td>
+                                                <a href="{% url 'delete_invoice_product' invoice.id item.id %}"
+                                                    data-toggle="tooltip" data-placement="top" title="Delete"
+                                                    class="btn btn-danger"
+                                                    style="width: 25px; height: 25px; font-size: 12px; padding: 0; padding-top: 3px;">
+                                                    <span aria-hidden="true"><i class="fas fa-trash-alt"></i></span></a>
+                                                <button
+                                                    style="margin-left: 10px; width: 26px; height: 26px; font-size: 12px; padding: 0;"
+                                                    class='btn btn-success' type='submit' data-toggle="tooltip"
+                                                    data-placement="top" title="Save changes"><i
+                                                        class="fas fa-edit"></i></button>
+                                            </td>
+                                        </tr>
                                     </form>
                                     {% endfor %}
                                 </tbody>

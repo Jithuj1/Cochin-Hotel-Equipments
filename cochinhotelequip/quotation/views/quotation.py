@@ -3,9 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from invoice.models.invoice import Invoice, InvoiceItem, StoreNames
 from django.db.models import Q
-from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import re
 from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
@@ -18,6 +16,8 @@ def quotation(request):
     if request.method == 'GET':
         quotation_list = Invoice.objects.filter(
             is_quotation=True).order_by('-created_at')
+        # deleting invalid quotations 
+        Invoice.objects.filter(sub_total = 0, amount_paid=0).delete()
         unsaved_quotations = Invoice.objects.filter(
             is_quotation=True, quotation_num_seq=None).order_by('-created_at')
         for quotation in unsaved_quotations:
@@ -177,6 +177,7 @@ def add_quotation_item(request, quotation_id, customer_id):
     return render(request, 'quotation/generate_quotation.html', context)
 
 
+@login_required(login_url='login')
 def edit_quotation_item(request, quotation_item_id, quotation_id, customer_id):
     if request.method == 'POST':
 

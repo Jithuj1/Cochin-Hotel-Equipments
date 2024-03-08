@@ -89,9 +89,6 @@
                                     class="fas fa-eye"></i></a>
                             <button class="btn btn-sm btn-success" style="margin-left: 10px;" data-toggle="modal"
                                 data-target="#pdfModal{{quotation.id}}"><i class="fas fa-file-pdf"></i></button>
-                            <!-- <a class="btn btn-sm btn-success" style="margin-left: 5px;"
-                                onclick="downloadPdf('{{quotation.id}}', '{{quotation.invoice_num}}')"><i
-                                    class="far fa-file-pdf"></i></a> -->
                             <button class="btn btn-sm"
                                 style="margin-left: 5px; color: white; background-color: rgb(28, 72, 105);"
                                 data-toggle="modal" data-target="#makePaymentModal{{quotation.id}}"><i
@@ -154,7 +151,7 @@
                             role="document">
                             <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                                 <div class="modal-header border-0">
-                                    <h5 class="modal-title" id="discountModal">Paying Amount </h5>
+                                    <h5 class="modal-title">Paying Amount </h5>
                                 </div>
 
                                 <!-- Form starts here -->
@@ -162,7 +159,7 @@
                                     {% csrf_token %}
                                     <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                                         <input class="form-control bg-dark border-0 w-75" name="amount" type="number"
-                                            value="{{ quotation.amount_remaining}}" min=1>
+                                            value="{{ quotation.amount_remaining}}">
                                         <!--page value-->
                                         <input type='text' value='{{ quotation_list.number }}' name='page_value'
                                             style='display: none'>

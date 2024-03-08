@@ -132,14 +132,14 @@
                             role="document">
                             <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
                                 <div class="modal-header border-0">
-                                    <h5 class="modal-title" id="discountModal">Paying Amount </h5>
+                                    <h5 class="modal-title">Paying Amount </h5>
                                 </div>
                                 <!-- Form starts here -->
                                 <form method="post" action="{% url 'invoice_make_payment' invoice.id %}?page={{ invoice_list.number }}">
                                     {% csrf_token %}
                                     <div class="modal-body d-flex w-100 align-items-center justify-content-center">
                                         <input class="form-control bg-dark border-0 w-75" name="amount" type="number"
-                                            value="{{ invoice.amount_remaining}}" min=1>
+                                            value="{{ invoice.amount_remaining}}">
                                     </div>
 
                                     <div class="modal-footer border-0">
