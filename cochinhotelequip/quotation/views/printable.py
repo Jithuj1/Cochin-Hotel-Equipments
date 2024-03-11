@@ -28,7 +28,7 @@ def generate_quotation_pdf(request, quotation_id):
         "street2":"Kalamasserty, CMS College Rd, Ernakulam",
         "city":"Ernakulam",
         "state":"Kerala",
-        "zipcode":"680503",
+        "zipcode":"683106",
         "phone":"+91 7034222200",
         "email":"cochinhotelequipments2209@gmail.com"
     }
