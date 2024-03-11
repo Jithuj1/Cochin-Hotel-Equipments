@@ -137,8 +137,8 @@ def add_quotation_item(request, quotation_id, customer_id):
     quotation = Invoice.objects.get(id=quotation_id)
 
     if request.method == 'POST':
-
-        unit = request.POST.get('unit')
+    
+        unit = request.POST.get('productName')
         if not unit:
             messages.error(request, 'Please choose a product.')
             return redirect('add_quotation_item', quotation_id, customer_id)

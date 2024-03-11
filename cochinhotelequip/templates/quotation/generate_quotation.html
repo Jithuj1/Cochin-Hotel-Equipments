@@ -30,6 +30,26 @@
     #yourTableId {
         -ms-overflow-style: none;
     }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .list {
+        width: 100%;
+        background-color: #252525;
+        position: absolute;
+    }
+
+    .list-items {
+        padding: 12px;
+
+    }
+
+    .list-items:hover {
+        background-color: rgb(76, 95, 111);
+    }
 </style>
 <!-- end of style -->
 
@@ -92,166 +112,257 @@
                         <div class="bg-secondary rounded p-4">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h6 class="mb-4">Quotation Products</h6>
-                                <div class="form-floating mb-3">
-                                    <form method='post'>
-                                        <div class="input-group mb-3">
+                                <div class="form-floating mb-3 w-50">
+                                    <form method='post'
+                                        action="{% url 'add_quotation_item' quotation.id customer.id %}">
+                                        {% csrf_token %}
+                                        <div class="d-flex justify-content-center">
+                                            <div style='position:relative' class="w-75">
+                                                <input class="form-control bg-dark border-0 shadow-none" type='text'
+                                                    name='productName' style="display:none" id='productInputHidden' />
 
-                                            {% csrf_token %}
-                                            <select name="unit" class="custom-select form-select"
-                                                id="inputGroupSelect01" style="text-align: right;width:12vw">
-                                                <option value='' selected>Choose...</option>
-                                                {% for product in products%}
-                                                <option value="{{product.id}}">{{product.name}}</option>
-                                                {% endfor %}
-                                            </select>
+                                                <input class="form-control bg-dark border-0 shadow-none" type='text'
+                                                    id='productInput' placeholder="Search" autocomplete="off" />
+                                                <ul class='list'></ul>
+                                            </div>
                                             <div class="input-group-append">
                                                 <button class="btn btn-success" type="submit">Add </button>
                                             </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
-                        </div>
-                        <div id="yourTableId" style="height: 60vh; overflow-y: auto;">
-                            <table class="table table-bordered text-white" style="font-size: 12px; width: 100%;">
-                                <thead style="width: 100%;">
-                                    <tr>
-                                        <th style="width: 7%;" scope="col">#</th>
-                                        <th style="width: 40%;" scope="col">Product</th>
-                                        <th style="width: 10%;" scope="col">Qty</th>
-                                        <th style="width: 15%;" scope="col">Price</th>
-                                        <th style="width: 15%;" scope="col">Sub Total</th>
-                                        <th style="width: 13%;" scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for item in quotation_products %}
-                                    <form method='post'
-                                        action="{% url 'edit_quotation_item' item.id quotation.id customer.id %}">
-                                        {% csrf_token %}
+                            <div id="yourTableId" style="height: 60vh; overflow-y: auto;">
+                                <table class="table table-bordered text-white" style="font-size: 12px; width: 100%;">
+                                    <thead style="width: 100%;">
                                         <tr>
-                                            <td> {{forloop.counter}}</td>
-                                            <td> {{item.product.name }}</td>
-                                            <td><input type='number' style="width:100%;"
-                                                    class="bg-secondary text-white border-0" name='quantity'
-                                                    value="{{item.qty}}" min='1' pattern='\d+'></td>
-                                            <td><input style="width:100%;" class="bg-secondary text-white border-0"
-                                                    type='number' size=5 value='{{item.rate}}' name='rate'></td>
-                                            <td>{{item.sub_total}}</td>
-                                            <td>
-                                                <a href="{% url 'delete_quotation_product' item.id %}"
-                                                    data-toggle="tooltip" data-placement="top" title="Delete"
-                                                    class="btn btn-danger"
-                                                    style="width: 25px; height: 25px; font-size: 12px; padding: 0; padding-top: 3px;">
-                                                    <span aria-hidden="true"><i class="fas fa-trash-alt"></i></span></a>
-                                                <button
-                                                    style="margin-left: 10px; width: 26px; height: 26px; font-size: 12px; padding: 0;"
-                                                    class='btn btn-success' type='submit' data-toggle="tooltip"
-                                                    data-placement="top" title="Save changes"><i
-                                                        class="fas fa-edit"></i></button>
-                                            </td>
-
+                                            <th style="width: 7%;" scope="col">#</th>
+                                            <th style="width: 40%;" scope="col">Product</th>
+                                            <th style="width: 10%;" scope="col">Qty</th>
+                                            <th style="width: 15%;" scope="col">Price</th>
+                                            <th style="width: 15%;" scope="col">Sub Total</th>
+                                            <th style="width: 13%;" scope="col">Action</th>
                                         </tr>
-                                    </form>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <div class="mt-4 d-flex align-items-center justify-content-evenly">
-                                <a href="{% url 'delete_quotation' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(94, 61, 61); border: none;" data-toggle="modal"
-                                    data-target="#deleteModal">Delete</a>
-                                <a href="{% url 'save_quotation' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(34, 55, 34); border: none;">Save Quotation</a>
-                                <a href="{% url 'convert_to_invoice' quotation.id %}" class="btn btn-success"
-                                    style="background-color: rgb(28, 72, 105); border: none;">Convert to Invoice</a>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in quotation_products %}
+                                        <form method='post'
+                                            action="{% url 'edit_quotation_item' item.id quotation.id customer.id %}">
+                                            {% csrf_token %}
+                                            <tr>
+                                                <td> {{forloop.counter}}</td>
+                                                <td> {{item.product.name }}</td>
+                                                <td><input type='number' style="width:100%;"
+                                                        class="bg-secondary text-white border-0" name='quantity'
+                                                        value="{{item.qty}}" min='1' pattern='\d+'></td>
+                                                <td><input style="width:100%;" class="bg-secondary text-white border-0"
+                                                        type='number' size=5 value='{{item.rate}}' name='rate'></td>
+                                                <td>{{item.sub_total}}</td>
+                                                <td>
+                                                    <a href="{% url 'delete_quotation_product' item.id %}"
+                                                        data-toggle="tooltip" data-placement="top" title="Delete"
+                                                        class="btn btn-danger"
+                                                        style="width: 25px; height: 25px; font-size: 12px; padding: 0; padding-top: 3px;">
+                                                        <span aria-hidden="true"><i
+                                                                class="fas fa-trash-alt"></i></span></a>
+                                                    <button
+                                                        style="margin-left: 10px; width: 26px; height: 26px; font-size: 12px; padding: 0;"
+                                                        class='btn btn-success' type='submit' data-toggle="tooltip"
+                                                        data-placement="top" title="Save changes"><i
+                                                            class="fas fa-edit"></i></button>
+                                                </td>
+
+                                            </tr>
+                                        </form>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="mt-4 d-flex align-items-center justify-content-evenly">
+                                    <a href="{% url 'delete_quotation' quotation.id %}" class="btn btn-success"
+                                        style="background-color: rgb(94, 61, 61); border: none;" data-toggle="modal"
+                                        data-target="#deleteModal">Delete</a>
+                                    <a href="{% url 'save_quotation' quotation.id %}" class="btn btn-success"
+                                        style="background-color: rgb(34, 55, 34); border: none;">Save Quotation</a>
+                                    <a href="{% url 'convert_to_invoice' quotation.id %}" class="btn btn-success"
+                                        style="background-color: rgb(28, 72, 105); border: none;">Convert to Invoice</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- right side for cusotmer details and invoice -->
-    <div class="col-md-3" style="font-size: 14px; max-height: 600px;">
-        <div class="container-fluid pt-4 px-2">
-            <div class="row g-4">
-                <div class="col-sm-12 col-xl-6 w-100">
-                    <div id="yourTableId" class="bg-secondary rounded h-100"
-                        style="max-height: 250px; overflow-y: auto;">
-                        <h6 class="mb-4">Customer details and invoice</h6>
-                        <p>Customer Name : {{customer.full_name}}</p>
-                        {% for address in address_list %}
-                        {% if address.is_default %}
-                        <div>
-                            <p style="font-size: 16px; margin: 0; font-weight: bold;">Delivery Address</p>
-                            <!-- <summary class="fw-bold fs-base text-muted mb-2">{{address.city}}</summary> -->
-                            <p style="font-size: 14px;">{{address.street1}},
-                                {{address.street2}}<br />
-                                {{address.city}},
-                                {{address.state}}, {{address.country}} <br>
-                                Pin : {{address.zipcode}}<br />
-                                Phone : {{address.phone}}</p>
-
-                        </div>
-                        {% else %}
-                        <div>
-                            <p style="font-size: 16px;">Address line {{forloop.counter}}</p>
-                            <details>
-                                <summary class="fw-bold fs-base text-muted mb-2">{{address.street1}},
-                                    {{address.street2}}, {{address.city}}</summary>
-                                <p>{{address.street1}}<br />
+        <!-- right side for cusotmer details and invoice -->
+        <div class="col-md-3" style="font-size: 14px; max-height: 600px;">
+            <div class="container-fluid pt-4 px-2">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-6 w-100">
+                        <div id="yourTableId" class="bg-secondary rounded h-100"
+                            style="max-height: 250px; overflow-y: auto;">
+                            <h6 class="mb-4">Customer details and invoice</h6>
+                            <p>Customer Name : {{customer.full_name}}</p>
+                            {% for address in address_list %}
+                            {% if address.is_default %}
+                            <div>
+                                <p style="font-size: 16px; margin: 0; font-weight: bold;">Delivery Address</p>
+                                <!-- <summary class="fw-bold fs-base text-muted mb-2">{{address.city}}</summary> -->
+                                <p style="font-size: 14px;">{{address.street1}},
                                     {{address.street2}}<br />
                                     {{address.city}},
-                                    {{address.state}}, {{address.country}}
-                                    {{address.zipcode}}<br />
-                                    {{address.phone}} <br>
-                                    <a href="{% url 'change_delivery_address' quotation.id customer.id address.id%}"
-                                        style="color: rgb(36, 200, 212);">Deliver to this address</a>
-                                </p>
-                            </details>
+                                    {{address.state}}, {{address.country}} <br>
+                                    Pin : {{address.zipcode}}<br />
+                                    Phone : {{address.phone}}</p>
+
+                            </div>
+                            {% else %}
+                            <div>
+                                <p style="font-size: 16px;">Address line {{forloop.counter}}</p>
+                                <details>
+                                    <summary class="fw-bold fs-base text-muted mb-2">{{address.street1}},
+                                        {{address.street2}}, {{address.city}}</summary>
+                                    <p>{{address.street1}}<br />
+                                        {{address.street2}}<br />
+                                        {{address.city}},
+                                        {{address.state}}, {{address.country}}
+                                        {{address.zipcode}}<br />
+                                        {{address.phone}} <br>
+                                        <a href="{% url 'change_delivery_address' quotation.id customer.id address.id%}"
+                                            style="color: rgb(36, 200, 212);">Deliver to this address</a>
+                                    </p>
+                                </details>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="container-fluid p-0">
-            <div class="col-sm-12 col-xl-12 mt-3">
-                <div class="bg-secondary rounded h-100 p-2">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="mb-2">Amount Details</h6>
-                        <button data-toggle="modal" data-target="#discountModal{{quotation.id}}"
-                            style="margin-right: 10px; margin-bottom: 5px; border-radius: 5px; background-color: rgb(34, 55, 34); color: white; border: none;">
-                            <i class="fas fa-plus"></i> Discount</button>
+            <div class="container-fluid p-0">
+                <div class="col-sm-12 col-xl-12 mt-3">
+                    <div class="bg-secondary rounded h-100 p-2">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-2">Amount Details</h6>
+                            <button data-toggle="modal" data-target="#discountModal{{quotation.id}}"
+                                style="margin-right: 10px; margin-bottom: 5px; border-radius: 5px; background-color: rgb(34, 55, 34); color: white; border: none;">
+                                <i class="fas fa-plus"></i> Discount</button>
+                        </div>
+                        <table class="table table-bordered" style="color: rgb(23, 176, 153);">
+                            <tbody>
+                                <tr>
+                                    <td>Sub Total :</td>
+                                    <td>{{quotation.sub_total}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Disocunt :</td>
+                                    <td>{{quotation.discount}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Amount Paid :</td>
+                                    <td>{{quotation.amount_paid}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Amount Remaining :</td>
+                                    <td>{{quotation.amount_remaining}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Grand Total :</td>
+                                    <td>{{quotation.grand_total}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-bordered" style="color: rgb(23, 176, 153);">
-                        <tbody>
-                            <tr>
-                                <td>Sub Total :</td>
-                                <td>{{quotation.sub_total}}</td>
-                            </tr>
-                            <tr>
-                                <td>Disocunt :</td>
-                                <td>{{quotation.discount}}</td>
-                            </tr>
-                            <tr>
-                                <td>Amount Paid :</td>
-                                <td>{{quotation.amount_paid}}</td>
-                            </tr>
-                            <tr>
-                                <td>Amount Remaining :</td>
-                                <td>{{quotation.amount_remaining}}</td>
-                            </tr>
-                            <tr>
-                                <td>Grand Total :</td>
-                                <td>{{quotation.grand_total}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <script>
+        let product_list = [];
 
-{% endblock %}
+        // Iterate over products and dynamically create JavaScript objects
+        {% for product in products %}
+        product_list.push({
+            name: '{{ product.name }}',
+            id: '{{ product.id }}',
+        });
+        {% endfor %}
+
+        // Sort the product list alphabetically by product name
+        product_list.sort((a, b) => a.name.localeCompare(b.name));
+
+
+        let input = document.getElementById('productInput');
+        let inputHidden = document.getElementById('productInputHidden')
+
+        {% comment %} input.addEventListener('blur', () => {
+            // Remove existing list items
+            removeElements();
+        }); {% endcomment %}
+
+        input.addEventListener('focus', (e) => {
+            console.log('input.value')
+            removeElements();
+            let maxValue = 6
+            let displayCount = 0
+            for (let product of product_list) {
+                if (displayCount < maxValue) {
+                    // Create a new list item
+                    let listItem = document.createElement('li');
+                    listItem.classList.add('list-items');
+                    listItem.style.cursor = 'pointer';
+                    listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
+
+
+                    // Highlight the matching part of the product name
+                    let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+                    listItem.innerHTML = highlightedName;
+
+                    // Append the list item to the list container
+                    document.querySelector('.list').appendChild(listItem);
+                    displayCount++;
+                }
+            }
+        });
+
+        // Add event listener for keyup event on input
+        input.addEventListener('keyup', (e) => {
+            // Remove existing list items
+            removeElements();
+
+            for (let product of product_list) {
+                if (product.name.toLowerCase().includes(input.value.toLowerCase()) && input.value !== '') {
+                    // Create a new list item
+                    let listItem = document.createElement('li');
+                    listItem.classList.add('list-items');
+                    listItem.style.cursor = 'pointer';
+                    listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
+
+
+                    // Highlight the matching part of the product name
+                    let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+                    listItem.innerHTML = highlightedName;
+
+                    // Append the list item to the list container
+                    document.querySelector('.list').appendChild(listItem);
+                }
+            }
+        });
+
+
+
+        function displayNames(value_name, value_id) {
+            input.value = value_name
+            inputHidden.value = value_id
+            removeElements()
+        }
+
+        // Function to remove existing list items
+        function removeElements() {
+            let items = document.querySelectorAll(".list-items")
+            items.forEach((item) => {
+                item.remove()
+            })
+        }
+    </script>
+    {% endblock %}
