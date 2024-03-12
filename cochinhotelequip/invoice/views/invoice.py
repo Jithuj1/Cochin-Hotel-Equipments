@@ -11,6 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 @login_required(login_url='login')
 def invoice(request):
     if request.method == 'GET':
+        Invoice.objects.filter(sub_total = 0, amount_paid=0).delete()
         invoice_list = Invoice.objects.filter(is_quotation=False).order_by('-created_at')
     else:
         search = request.POST.get('search')
@@ -62,7 +63,7 @@ def add_discount(request, invoice_id):
         invoice = Invoice.objects.get(id=invoice_id)
         if discount > invoice.amount_remaining:
             messages.error(request, "You can't provide discount more than amount remaining")
-            return redirect('view_invoice', invoice)
+            return redirect('view_invoice', invoice_id)
         invoice.discount = discount
         invoice.save()
         
@@ -87,3 +88,40 @@ def make_payment(request, invoice_id):
             return redirect(reverse('invoice')+f'?page={page_number}')
         
         return redirect(reverse('invoice')+f'?page={page_number}')
+    
+
+@login_required(login_url='login')
+def delete_invoice(request, invoice_id):
+    InvoiceItem.objects.filter(invoice=invoice_id).delete()
+    Invoice.objects.get(id=invoice_id).delete()
+    return redirect('invoice')
+
+
+@login_required(login_url='login')
+def edit_invoice_item(request, invoice_id, invoice_item_id):
+    if request.method == 'POST':
+
+        quantity = int(request.POST.get('quantity'))
+        rate = float(request.POST.get('rate'))
+
+        invoice_item = InvoiceItem.objects.get(id=invoice_item_id)
+        invoice_item.qty = quantity
+        invoice_item.rate = rate
+        invoice_item.save()
+
+        invoice_item.calculate_item_totals()
+        invoice_item.invoice.calculate_total()
+
+        return redirect('view_invoice', invoice_id)
+
+
+@login_required(login_url='login')
+def delete_invoice_product(requset, invoice_id, invoice_item_id):
+    invoice_item = InvoiceItem.objects.get(id=invoice_item_id)
+    invoice = invoice_item.invoice
+    invoice_item.delete()
+    invoice.discount = 0
+    invoice.save()
+
+    invoice.calculate_total()
+    return redirect('view_invoice', invoice_id)

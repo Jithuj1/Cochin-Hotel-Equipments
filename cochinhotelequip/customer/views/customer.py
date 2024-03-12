@@ -17,6 +17,7 @@ def customer(request):
         customers = User.objects.all().order_by("-date_joined")
     else:
         search = request.POST.get('search')
+        search = search.strip()
         q_object = Q()
         q_object.add(Q(first_name__icontains=search), Q.OR)
         q_object.add(Q(last_name__icontains=search), Q.OR)

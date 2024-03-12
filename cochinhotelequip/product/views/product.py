@@ -122,10 +122,11 @@ def delete_product(request, product_id):
 @login_required(login_url='login')
 def update_product(request, product_id):
 
-   
     page_number =  request.GET.get('page')
 
     product = Product.objects.filter(id=product_id).first()
+    all_units = [unit.value for unit in UnitTypes]
+    units_list = [product.unit] + [unit for unit in all_units if unit != product.unit]
     category_list = Category.objects.all()
     if product and product.category:
         category_list = [product.category] + [
@@ -135,6 +136,7 @@ def update_product(request, product_id):
         "category_list":category_list,
         "active_page":"product",
         'page_number': page_number,
+        'units': units_list
         }
     if request.method =="GET":
         
@@ -144,28 +146,16 @@ def update_product(request, product_id):
 
         product_name = request.POST.get('product_name')
         hsn_code = request.POST.get('hsn_code')
-        tax_perc = request.POST.get('tax_perc')
+        unit = request.POST.get('unit')
         category = request.POST.get('category')
         remarks = request.POST.get('remarks')
         price = request.POST.get('price')
 
         if any(value is not None and value.isspace() 
-               for value in [product_name, hsn_code, tax_perc, category, remarks, price]):
+               for value in [product_name, hsn_code, category, remarks, price]):
             messages.error(request, "Input cannot be blank or None")
             url = reverse('update_product', kwargs={'product_id': product_id})
             return redirect(url)
-        
-        if tax_perc:
-            try:
-                int_value = int(tax_perc)
-            except ValueError:
-                try:
-                    float_value = float(tax_perc)
-                    tax_perc = "{:.2f}".format(float_value)
-                except ValueError:
-                    messages.error(request, "please enter a numerical value for tax ")
-                    url = reverse('update_product', kwargs={'product_id': product_id})
-                    return redirect(url)
                 
         if price:
             try:
@@ -183,7 +173,7 @@ def update_product(request, product_id):
 
         product.name = product_name if product_name !="" else product.name
         product.hsn_code = hsn_code if hsn_code !="" else product.hsn_code
-        product.tax_perc = tax_perc if tax_perc !="" else product.tax_perc
+        product.unit = unit if unit !="" else product.unit
         product.price = price if price !="" else product.price
         product.remark = remarks if remarks !="" else product.remark
         product.category = new_category

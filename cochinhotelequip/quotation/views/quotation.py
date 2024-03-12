@@ -3,9 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from invoice.models.invoice import Invoice, InvoiceItem, StoreNames
 from django.db.models import Q
-from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import re
 from account.models.user import User
 from account.models.address import Address
 from product.models.product import Product
@@ -16,16 +14,33 @@ from django.urls import reverse
 @login_required(login_url='login')
 def quotation(request):
     if request.method == 'GET':
-        quotation_list = Invoice.objects.filter(is_quotation=True).order_by('-created_at')
+        quotation_list = Invoice.objects.filter(
+            is_quotation=True).order_by('-created_at')
+        # deleting invalid quotations 
+        Invoice.objects.filter(sub_total = 0, amount_paid=0).delete()
+        unsaved_quotations = Invoice.objects.filter(
+            is_quotation=True, quotation_num_seq=None).order_by('-created_at')
+        for quotation in unsaved_quotations:
+            quotation.generate_quotaion_num()
+            quotation.calculate_total()
     else:
         search = request.POST.get('search')
-        q_object = Q(is_quotation=True)
-        q_object.add(Q(customer__first_name__icontains=search), Q.OR)
-        q_object.add(Q(customer__last_name__icontains=search), Q.OR)
-        q_object.add(Q(quotation_date__icontains=search), Q.OR)
-        q_object.add(Q(grand_total__icontains=search), Q.OR)
-
-        quotation_list = Invoice.objects.filter(q_object).order_by('-created_at')
+        if search.count("/") == 3 :
+            qtn_no = search.split("/")
+            fiscal_year = qtn_no[-2]
+            seq_no = qtn_no[-1]
+            quotation_list = Invoice.objects.filter(
+            Q(is_quotation=True) &
+            (Q(invoice_num_fiscalyr=fiscal_year)) & 
+            (Q(quotation_num_seq=seq_no))  
+            ).order_by('-created_at')
+        else:
+            quotation_list = Invoice.objects.filter(
+                Q(is_quotation=True) &
+                (Q(customer__first_name__icontains=search) |
+                Q(customer__last_name__icontains=search) |
+                Q(quotation_date__icontains=search) |
+                Q(grand_total__icontains=search))).order_by('-created_at')
 
     page = request.GET.get('page', 1)
 
@@ -37,13 +52,13 @@ def quotation(request):
     except EmptyPage:
         quotation_list = paginator.page(paginator.num_pages)
 
-    context = {"quotation_list":quotation_list, "active_page":"quotation"}
+    context = {"quotation_list": quotation_list, "active_page": "quotation"}
     return render(request, 'quotation/quotation.html', context)
 
 
 @login_required(login_url='login')
 def select_customer(request):
-    store_names = [ store.value for store in StoreNames]
+    store_names = [store.value for store in StoreNames]
     if request.method == 'GET':
         customers = User.objects.all().order_by("-date_joined")
     else:
@@ -54,10 +69,10 @@ def select_customer(request):
         q_object.add(Q(phone__icontains=search), Q.OR)
 
         customers = User.objects.filter(q_object).order_by("-date_joined")
-    
+
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(customers, 2)
+    paginator = Paginator(customers, 15)
     try:
         customers = paginator.page(page)
     except PageNotAnInteger:
@@ -66,10 +81,10 @@ def select_customer(request):
         customers = paginator.page(paginator.num_pages)
 
     context = {
-        "customers": customers, 
-        "active_page":"quotation",
-        "store_names" : store_names
-        }
+        "customers": customers,
+        "active_page": "quotation",
+        "store_names": store_names
+    }
     return render(request, 'quotation/select_customer.html', context)
 
 
@@ -82,17 +97,18 @@ def generate_quotation(request, customer_id):
         store = request.POST.get('store')
 
         products = Product.objects.all().order_by('-created_at')
-        quotation = Invoice.objects.create(customer=customer, address=primary_address, store = store)
-    
+        quotation = Invoice.objects.create(
+            customer=customer, address=primary_address, store=store)
+
         return redirect('add_quotation_item', quotation.id, customer.id)
 
     context = {
-        "products": products, 
+        "products": products,
         "active_page": "quotation",
         "customer": customer,
         "address": address,
         "primary_address": primary_address,
-        }
+    }
 
     return render(request, 'quotation/generate_quotation.html', context)
 
@@ -108,7 +124,7 @@ def delete_quotation_product(request, quotation_item_id):
     invoice.calculate_total()
 
     return redirect('add_quotation_item', quotation_id, customer_id)
-    
+
 
 @login_required(login_url='login')
 def add_quotation_item(request, quotation_id, customer_id):
@@ -116,7 +132,8 @@ def add_quotation_item(request, quotation_id, customer_id):
     address = Address.objects.filter(customer=customer).order_by('-is_default')
     primary_address = address.first()
     products = Product.objects.all().order_by('-created_at')
-    quotation_products = InvoiceItem.objects.filter(invoice=quotation_id).order_by('-created_at')
+    quotation_products = InvoiceItem.objects.filter(
+        invoice=quotation_id).order_by('-created_at')
     quotation = Invoice.objects.get(id=quotation_id)
 
     if request.method == 'POST':
@@ -126,29 +143,29 @@ def add_quotation_item(request, quotation_id, customer_id):
             messages.error(request, 'Please choose a product.')
             return redirect('add_quotation_item', quotation_id, customer_id)
         product = Product.objects.get(id=unit)
-        existing_quotation_item = InvoiceItem.objects.filter(invoice=quotation_id, product=product)
-        
+        existing_quotation_item = InvoiceItem.objects.filter(
+            invoice=quotation_id, product=product)
+
         if existing_quotation_item:
             quotation_item = existing_quotation_item.first()
-            quotation_item.qty +=1 
+            quotation_item.qty += 1
         else:
             quotation_item = InvoiceItem(
-                product=product, 
+                product=product,
                 invoice=quotation,
-                rate = product.price,
-                qty = 1
-                )
+                rate=product.price,
+                qty=1
+            )
         quotation_item.save()
 
         quotation_item.calculate_item_totals()
         quotation_item.invoice.calculate_total()
         return redirect('add_quotation_item', quotation_id, customer_id)
- 
 
     quotation = Invoice.objects.get(id=quotation_id)
 
     context = {
-        "products": products, 
+        "products": products,
         "active_page": "quotation",
         "customer": customer,
         "address_list": address,
@@ -156,10 +173,11 @@ def add_quotation_item(request, quotation_id, customer_id):
         'quotation': quotation,
         "quotation_products": quotation_products if quotation_products else None,
         'invoice_id': quotation_id,
-        }
+    }
     return render(request, 'quotation/generate_quotation.html', context)
 
 
+@login_required(login_url='login')
 def edit_quotation_item(request, quotation_item_id, quotation_id, customer_id):
     if request.method == 'POST':
 
@@ -170,16 +188,16 @@ def edit_quotation_item(request, quotation_item_id, quotation_id, customer_id):
         quotation_item.qty = quantity
         quotation_item.rate = rate
         quotation_item.save()
-        
+
         quotation_item.calculate_item_totals()
         quotation_item.invoice.calculate_total()
 
         return redirect('add_quotation_item', quotation_id, customer_id)
-    
+
 
 @login_required(login_url='login')
 def delete_quotation(request, quotation_id):
-    InvoiceItem.objects.filter(invoice =quotation_id).delete()
+    InvoiceItem.objects.filter(invoice=quotation_id).delete()
     Invoice.objects.get(id=quotation_id).delete()
     return redirect('quotation')
 
@@ -200,7 +218,7 @@ def save_quotation(request, quotation_id):
 @login_required(login_url='login')
 def change_delivery_address(request, quotation_id, customer_id, address_id):
     Address.objects.filter(customer=customer_id).update(is_default=False)
-    address =Address.objects.get(id=address_id)
+    address = Address.objects.get(id=address_id)
     address.is_default = True
     address.save()
     return redirect('add_quotation_item', quotation_id, customer_id)
@@ -215,15 +233,16 @@ def add_discount(request, quotation_id, customer_id):
 
         quotation = Invoice.objects.get(id=quotation_id)
         if discount > quotation.amount_remaining:
-            messages.error(request, "You can't provide discount more than amount remaining")
+            messages.error(
+                request, "You can't provide discount more than amount remaining")
             return redirect('add_quotation_item', quotation_id, customer_id)
         quotation.discount = discount
         quotation.save()
-        
+
         quotation.calculate_total()
 
         return redirect('add_quotation_item', quotation_id, customer_id)
-    
+
 
 @login_required(login_url='login')
 def make_payment(request, quotation_id):
@@ -236,10 +255,10 @@ def make_payment(request, quotation_id):
 
         response = quotation.make_payment(int(amount))
 
-        if not response["status"] :
+        if not response["status"]:
             messages.error(request, response["message"])
             return redirect(reverse('quotation')+f'?page={page_number}')
-        
+
         return redirect(reverse('quotation')+f'?page={page_number}')
 
 
@@ -250,11 +269,11 @@ def convert_to_invoice(request, quotation_id: int):
     if len(quotation_items) == 0:
         quotation.delete()
         return redirect('quotation')
-    
+
     quotation.is_quotation = False
     quotation.invoice_date = datetime.date.today()
     quotation.save()
 
-    quotation_items.update(is_active = True)
+    quotation_items.update(is_active=True)
     quotation.generate_invoice_num()
     return redirect('invoice')
