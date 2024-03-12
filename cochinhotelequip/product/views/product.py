@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from product.models.product import Product, Category, UnitTypes
+from invoice.models.invoice import InvoiceItem
 from django.db.models import Q
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -180,5 +181,7 @@ def update_product(request, product_id):
 
         product.save()
         return redirect(reverse('product')+f'?page={page_number}')
+
+ 
 
         

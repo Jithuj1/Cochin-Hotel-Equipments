@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from invoice.models.invoice import Invoice, InvoiceItem, StoreNames
+from product.models.product import Product
 from django.db.models import Q
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -40,12 +41,42 @@ def invoice(request):
 @login_required(login_url='login')
 def view_invoice(request, invoice_id):
     invoice = Invoice.objects.get(id=invoice_id)
+    products = Product.objects.all().order_by('-created_at')
+
+    recent_product = InvoiceItem.objects.order_by('product_id', '-created_at').distinct('product_id')[:6]
+
     invoice_items = InvoiceItem.objects.filter(invoice=invoice)
     page_number = request.GET.get('page')
+    if request.method == "POST":
+        unit = request.POST.get('productName')
+        if not unit:
+            messages.error(request, 'Please choose a product.')
+           
+        product = Product.objects.get(id=unit)
+        existing_quotation_item = InvoiceItem.objects.filter(
+            invoice=invoice_id, product=product)
+
+        if existing_quotation_item:
+            quotation_item = existing_quotation_item.first()
+            quotation_item.qty += 1
+        else:
+            quotation_item = InvoiceItem(
+                product=product,
+                invoice=invoice,
+                rate=product.price,
+                qty=1
+            )
+        quotation_item.save()
+        quotation_item.calculate_item_totals()
+        quotation_item.invoice.calculate_total()
+        return redirect('view_invoice', invoice_id)
+    
     context = {
         "invoice": invoice,
+        'products': products,
         "invoice_items": invoice_items,
-        "address":invoice.address,
+        "address": invoice.address,
+        "recent_product": recent_product,
         "active_page":"invoice",
         "page":page_number,
     }

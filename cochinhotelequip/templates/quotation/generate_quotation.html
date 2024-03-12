@@ -50,6 +50,14 @@
     .list-items:hover {
         background-color: rgb(76, 95, 111);
     }
+    #productInput{
+        border-radius: 0;
+    }
+    #addbtn{
+        border-radius: 0;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px
+    }
 </style>
 <!-- end of style -->
 
@@ -126,7 +134,7 @@
                                                 <ul class='list'></ul>
                                             </div>
                                             <div class="input-group-append">
-                                                <button class="btn btn-success" type="submit">Add </button>
+                                                <button class="btn btn-success" id="addbtn" type="submit">Add </button>
                                             </div>
                                         </div>
                                     </form>
@@ -302,9 +310,16 @@
         input.addEventListener('focus', (e) => {
             
             removeElements();
+            recent_product_list = []
+            {% for product in recent_product %}
+            recent_product_list.push({
+            name: '{{ product.product.name }}',
+            id: '{{ product.product.id }}',
+        }); 
+        {% endfor %}
             let maxValue = 6
             let displayCount = 0
-            for (let product of product_list) {
+            for (let product of recent_product_list) {
                 if (displayCount < maxValue) {
                     // Create a new list item
                     let listItem = document.createElement('li');

@@ -30,6 +30,33 @@
     #yourTableId {
         -ms-overflow-style: none;
     }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .list {
+        width: 100%;
+        background-color: #252525;
+        position: absolute;
+    }
+
+    .list-items {
+        padding: 12px;
+
+    }
+
+    .list-items:hover {
+        background-color: rgb(76, 95, 111);
+    }
+    #productInput{
+        border-radius: 0;
+    }
+    #addbtn{
+        border-radius: 0;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px
+    }
 </style>
 <!-- end of style -->
 
@@ -64,28 +91,30 @@
 
 <div class="container-fluid py-3 px-3 d-flex text-white">
     <div class="bg-secondary d-flex w-100">
-        <div class='col-md-9'>
+        <div class='col-md-11'>
             <div class="container-fluid px-1">
                 <div class="row g-4">
                     <div class="col-sm-12 col-xl-6 w-100">
                         <div class="bg-secondary rounded p-4">
                             <div class="d-flex align-items-center justify-content-between">
                                 <h6 class="mb-4">Invoice Items</h6>
-                                <div class="form-floating mb-3">
-                                    <form method='post' style="visibility: hidden;">
-                                        <div class="input-group mb-3">
+                                <div class="form-floating mb-3 w-50">
+                                    <form method='post'
+                                        action="">
+                                        {% csrf_token %}
+                                        <div class="d-flex justify-content-center">
+                                            <div style='position:relative' class="w-75">
+                                                <input class="form-control bg-dark border-0 shadow-none" type='text'
+                                                    name='productName' style="display:none" id='productInputHidden' />
 
-                                            {% csrf_token %}
-                                            <select name="unit" class="custom-select form-select"
-                                                id="inputGroupSelect01" style="text-align: right;width:12vw">
-                                                <option value='' selected>Choose...</option>
-                                                {% for product in products%}
-                                                <option value="{{product.id}}">{{product.name}}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-success" type="submit">Add </button>
+                                                <input class="form-control bg-dark border-0 shadow-none" type='text'
+                                                    id='productInput' placeholder="Search" autocomplete="off" />
+                                                <ul class='list'></ul>
                                             </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-success" id="addbtn" type="submit">Add </button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -116,7 +145,7 @@
                                             <td><input style="width:100%;" class="bg-secondary text-white border-0"
                                                     type='number' size=5 value='{{item.rate}}' name='rate'></td>
                                             <td> {{item.sub_total }}</td>
-                                            <td>
+                                            <td class='d-flex'>
                                                 <a href="{% url 'delete_invoice_product' invoice.id item.id %}"
                                                     data-toggle="tooltip" data-placement="top" title="Delete"
                                                     class="btn btn-danger"
@@ -206,6 +235,103 @@
     </div>
 </div>
 
+<script>
+    let product_list = [];
 
+    // Iterate over products and dynamically create JavaScript objects
+    {% for product in products %}
+    product_list.push({
+        name: '{{ product.name }}',
+        id: '{{ product.id }}',
+    });
+    {% endfor %}
+
+    // Sort the product list alphabetically by product name
+    product_list.sort((a, b) => a.name.localeCompare(b.name));
+
+
+    let input = document.getElementById('productInput');
+    let inputHidden = document.getElementById('productInputHidden')
+
+    document.body.addEventListener('click', (event) => {
+        if (event.target !== input && !event.target.classList.contains('list-items')) {
+            removeElements()
+        }
+    });
+
+    input.addEventListener('focus', (e) => {
+        
+        removeElements();
+        recent_product_list = []
+        {% for product in recent_product %}
+        recent_product_list.push({
+        name: '{{ product.product.name }}',
+        id: '{{ product.product.id }}',
+    }); 
+    {% endfor %}
+        let maxValue = 6
+        let displayCount = 0
+        for (let product of recent_product_list) {
+            if (displayCount < maxValue) {
+                // Create a new list item
+                let listItem = document.createElement('li');
+                listItem.classList.add('list-items');
+                listItem.style.cursor = 'pointer';
+                listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
+
+
+                // Highlight the matching part of the product name
+                let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+                listItem.innerHTML = highlightedName;
+
+                // Append the list item to the list container
+                document.querySelector('.list').appendChild(listItem);
+                displayCount++;
+            }
+        }
+    });
+
+    // Add event listener for keyup event on input
+    input.addEventListener('keyup', (e) => {
+        // Remove existing list items
+        removeElements();
+
+        for (let product of product_list) {
+            if (product.name.toLowerCase().includes(input.value.toLowerCase()) && input.value !== '') {
+                // Create a new list item
+                let listItem = document.createElement('li');
+                listItem.classList.add('list-items');
+                listItem.style.cursor = 'pointer';
+                listItem.setAttribute('onclick', `displayNames('${product.name}','${product.id}')`);
+
+
+                // Highlight the matching part of the product name
+                let highlightedName = product.name.replace(new RegExp(input.value, "gi"), (match) => `<b style=color:green>${match}</b>`);
+
+                listItem.innerHTML = highlightedName;
+
+                // Append the list item to the list container
+                document.querySelector('.list').appendChild(listItem);
+            }
+        }
+    });
+
+
+
+    function displayNames(value_name, value_id) {
+        input.value = value_name
+        inputHidden.value = value_id
+        removeElements()
+    }
+
+    // Function to remove existing list items
+    function removeElements() {
+        let items = document.querySelectorAll(".list-items")
+        items.forEach((item) => {
+            item.remove()
+        })
+    }
+</script>
 
 {% endblock %}
