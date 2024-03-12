@@ -287,10 +287,11 @@
     let input = document.getElementById('productInput');
     let inputHidden = document.getElementById('productInputHidden')
     
-    {% comment %} input.addEventListener('blur', () => {
-        // Remove existing list items
-        removeElements();
-    }); {% endcomment %}
+    document.body.addEventListener('click', (event) => {
+        if (event.target !== input && !event.target.classList.contains('list-items')) {
+            removeElements()
+        }
+    });
 
     input.addEventListener('focus', (e) => {
     console.log('input.value')
