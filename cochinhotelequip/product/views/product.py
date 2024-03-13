@@ -20,8 +20,11 @@ def product(request):
 
     else:
         search = request.POST.get('search')
+        search = search.strip()
         q_object = Q()
         q_object.add(Q(name__icontains=search), Q.OR)
+        q_object.add(Q(hsn_code__icontains=search), Q.OR)
+        q_object.add(Q(unit__icontains=search), Q.OR)
         q_object.add(Q(category__name__icontains=search), Q.OR)
 
         products = Product.objects.filter(q_object).order_by("-created_at")
@@ -47,7 +50,8 @@ def add_product(request):
         units = [unit.value for unit in UnitTypes]
         context = {
             "category_list":category_list,
-            "units":units
+            "units":units,
+            "active_page":"product"
             }
         return render(request, 'product/add_product.html', context)
     else:

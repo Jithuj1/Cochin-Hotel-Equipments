@@ -21,6 +21,8 @@ def customer(request):
         q_object = Q()
         q_object.add(Q(first_name__icontains=search), Q.OR)
         q_object.add(Q(last_name__icontains=search), Q.OR)
+        q_object.add(Q(display_name__icontains=search), Q.OR)
+        q_object.add(Q(username__icontains=search), Q.OR)
         q_object.add(Q(phone__icontains=search), Q.OR)
 
         customers = User.objects.filter(q_object).order_by("-date_joined")

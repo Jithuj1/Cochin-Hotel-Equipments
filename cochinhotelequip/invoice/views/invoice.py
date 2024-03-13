@@ -16,13 +16,35 @@ def invoice(request):
         invoice_list = Invoice.objects.filter(is_quotation=False).order_by('-created_at')
     else:
         search = request.POST.get('search')
-        q_object = Q(is_quotation=False)
-        q_object.add(Q(customer__first_name__icontains=search), Q.OR)
-        q_object.add(Q(customer__last_name__icontains=search), Q.OR)
-        q_object.add(Q(quotation_date__icontains=search), Q.OR)
-        q_object.add(Q(grand_total__icontains=search), Q.OR)
+        search = search.strip()
+        if search.count("/") == 3 :
+            qtn_no = search.split("/")
+            fiscal_year = qtn_no[-2]
+            seq_no = qtn_no[-1]
+            invoice_list = Invoice.objects.filter(
+            Q(is_quotation=True) &
+            (Q(invoice_num_fiscalyr=fiscal_year)) & 
+            (Q(invoice_num_seq=seq_no))  
+            ).order_by('-created_at')
+        else:
+            invoice_list = Invoice.objects.filter(Q(is_quotation=False))
+            words = search.split()
+    
+            if search.isdigit() or (search.replace('.', '', 1).isdigit() and search.count('.') == 1):
+                invoice_list = invoice_list.filter(
+                    Q(sub_total__exact=search) |
+                    Q(grand_total__exact=search)
+                )
+            else:
+                for word in words:
+                    invoice_list = invoice_list.filter(
+                        Q(customer__first_name__icontains=word) |
+                        Q(customer__last_name__icontains=word) |
+                        Q(quotation_date__icontains=word)
+                    )
 
-        invoice_list = Invoice.objects.filter(q_object).order_by('-created_at')
+            invoice_list = invoice_list.order_by('-created_at')
+
 
     page = request.GET.get('page', 1)
 

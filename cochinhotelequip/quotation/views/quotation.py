@@ -25,6 +25,7 @@ def quotation(request):
             quotation.calculate_total()
     else:
         search = request.POST.get('search')
+        search = search.strip()
         if search.count("/") == 3 :
             qtn_no = search.split("/")
             fiscal_year = qtn_no[-2]
@@ -35,12 +36,23 @@ def quotation(request):
             (Q(quotation_num_seq=seq_no))  
             ).order_by('-created_at')
         else:
-            quotation_list = Invoice.objects.filter(
-                Q(is_quotation=True) &
-                (Q(customer__first_name__icontains=search) |
-                Q(customer__last_name__icontains=search) |
-                Q(quotation_date__icontains=search) |
-                Q(grand_total__icontains=search))).order_by('-created_at')
+            quotation_list = Invoice.objects.filter(Q(is_quotation=True))
+            words = search.split()
+
+            if search.isdigit() or (search.replace('.', '', 1).isdigit() and search.count('.') == 1):
+                quotation_list = quotation_list.filter(
+                    Q(sub_total__exact=search) |
+                    Q(grand_total__exact=search)
+                )
+            else:
+                for word in words:
+                    quotation_list = quotation_list.filter(
+                        Q(customer__first_name__icontains=word) |
+                        Q(customer__last_name__icontains=word) |
+                        Q(quotation_date__icontains=word)
+                    )
+
+            quotation_list = quotation_list.order_by('-created_at')
 
     page = request.GET.get('page', 1)
 
@@ -62,11 +74,17 @@ def select_customer(request):
     if request.method == 'GET':
         customers = User.objects.all().order_by("-date_joined")
     else:
-        search = request.POST.get('search')
         q_object = Q()
-        q_object.add(Q(first_name__icontains=search), Q.OR)
-        q_object.add(Q(last_name__icontains=search), Q.OR)
-        q_object.add(Q(phone__icontains=search), Q.OR)
+        search = request.POST.get('search')
+        search = search.strip()
+        words = search.split()
+        
+        for word in words:
+            q_object.add(Q(first_name__icontains=word), Q.OR)
+            q_object.add(Q(last_name__icontains=word), Q.OR)
+            q_object.add(Q(display_name__icontains=word), Q.OR)
+            q_object.add(Q(email__icontains=word), Q.OR)
+            q_object.add(Q(phone__icontains=word), Q.OR)
 
         customers = User.objects.filter(q_object).order_by("-date_joined")
 
