@@ -31,7 +31,7 @@ def product(request):
     
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(products, 15)
+    paginator = Paginator(products, 25)
     try:
         products = paginator.page(page)
     except PageNotAnInteger:

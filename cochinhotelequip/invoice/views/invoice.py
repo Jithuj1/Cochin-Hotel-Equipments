@@ -48,7 +48,7 @@ def invoice(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(invoice_list, 15)
+    paginator = Paginator(invoice_list, 25)
     try:
         invoice_list = paginator.page(page)
     except PageNotAnInteger:

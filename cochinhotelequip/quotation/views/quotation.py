@@ -56,7 +56,7 @@ def quotation(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(quotation_list, 15)
+    paginator = Paginator(quotation_list, 25)
     try:
         quotation_list = paginator.page(page)
     except PageNotAnInteger:
@@ -90,7 +90,7 @@ def select_customer(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(customers, 15)
+    paginator = Paginator(customers, 25)
     try:
         customers = paginator.page(page)
     except PageNotAnInteger:

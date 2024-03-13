@@ -27,7 +27,7 @@ def category(request):
 
     page = request.GET.get('page', 1)
 
-    paginator = Paginator(category_list, 15)
+    paginator = Paginator(category_list, 25)
     try:
         category_list = paginator.page(page)
     except PageNotAnInteger:
