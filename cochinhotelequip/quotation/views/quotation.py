@@ -182,7 +182,6 @@ def add_quotation_item(request, quotation_id, customer_id):
         return redirect('add_quotation_item', quotation_id, customer_id)
 
     quotation = Invoice.objects.get(id=quotation_id)
-    print(recent_product)
     context = {
         "products": products,
         "active_page": "quotation",
@@ -193,7 +192,6 @@ def add_quotation_item(request, quotation_id, customer_id):
         "quotation_products": quotation_products if quotation_products else None,
         'invoice_id': quotation_id,
         "recent_product": recent_product,
-
     }
     return render(request, 'quotation/generate_quotation.html', context)
 
