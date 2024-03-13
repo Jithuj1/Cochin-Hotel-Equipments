@@ -7,36 +7,71 @@
 
 {% block content %}
 <style>
-    #toastbox{
-      position: absolute;
-      top: 80px;
-      right: 30px;
-      display: flex;
-      align-items: flex-end;
-      flex-direction: column;
-      overflow: hidden;
-      padding: 20px;
-      font-weight: bold;
-      font-size: 12px;
-      }
-      
-      
-      .alert::after{
+    #toastbox {
+        position: absolute;
+        top: 80px;
+        right: 30px;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 20px;
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+
+    .alert::after {
         content: '';
         position: absolute;
-        left:0;
-        bottom:0;
+        left: 0;
+        bottom: 0;
         width: 100%;
         height: 5px;
         background: red;
         animation: anim 6s linear forwards;
-      }
-      @keyframes anim {
-        100%{
-          width: 0;
+    }
+
+    @keyframes anim {
+        100% {
+            width: 0;
         }
-      }
-  </style>
+    }
+
+    /* Customize the scrollbar */
+    .table-responsive {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    /* For Firefox */
+    .table-responsive {
+        scrollbar-width: thin;
+        scrollbar-color: #46494c #222020;
+    }
+
+    /* For Webkit browsers (Chrome, Safari, etc.) */
+    .table-responsive::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+        /* Light gray */
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background-color: #007bff;
+        /* Blue color for the handle */
+        border-radius: 10px;
+        /* Rounded corners */
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background-color: #0056b3;
+        /* Darker blue on hover */
+    }
+</style>
 
 
 
@@ -51,7 +86,7 @@
                 <button class="btn btn-success"
                     style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(50, 67, 32);">Search</button>
             </form>
-            
+
             <a class="btn btn-success"
                 style="margin-left: 20px; padding-left:15px; padding-right: 15px; background-color: rgb(40, 50, 66);"
                 href="{% url 'new_product' %}">Add product</a>
@@ -84,7 +119,8 @@
                         <td>
                             <button class="btn btn-sm btn-danger" style="margin-right: 15px;" data-toggle="modal"
                                 data-target="#deleteModal"><i class="fas fa-trash-alt"></i></button>
-                            <a class="btn btn-sm btn-success" href="{% url 'update_product' product.id %}?page={{ products.number }}"><i
+                            <a class="btn btn-sm btn-success"
+                                href="{% url 'update_product' product.id %}?page={{ products.number }}"><i
                                     class="fas fa-edit"></i></a>
                         </td>
                     </tr>
@@ -106,7 +142,8 @@
                                 </div>
                                 <div class="modal-footer border-0">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <a href="{% url 'delete_product' product.id %}?page={{ products.number }}" class="btn btn-danger">Delete</a>
+                                    <a href="{% url 'delete_product' product.id %}?page={{ products.number }}"
+                                        class="btn btn-danger">Delete</a>
                                 </div>
                             </div>
                         </div>
@@ -145,25 +182,25 @@
 
 <!-- scripts for modal -->
 <script>
-  // get the toastbox element
-  let toastBox = document.getElementById('toastbox')
-  {% if messages %}
-  {% for message in messages %}
-  showToast('{{ message }}')
-  {% endfor %}
-  {% endif %}
-function showToast(message){
-  let toast = document.createElement('div')
-  
-  toast.classList.add('alert','alert-danger')
-  toast.innerHTML = message
-  toastBox.appendChild(toast);
+    // get the toastbox element
+    let toastBox = document.getElementById('toastbox')
+    {% if messages %}
+    {% for message in messages %}
+    showToast('{{ message }}')
+    {% endfor %}
+    {% endif %}
+    function showToast(message) {
+        let toast = document.createElement('div')
 
-  // after 6s toast will remove
-  setTimeout(()=>{
-    toast.remove()
-  }, 6000)
-}
+        toast.classList.add('alert', 'alert-danger')
+        toast.innerHTML = message
+        toastBox.appendChild(toast);
+
+        // after 6s toast will remove
+        setTimeout(() => {
+            toast.remove()
+        }, 6000)
+    }
 </script>
 
 {% endblock %}

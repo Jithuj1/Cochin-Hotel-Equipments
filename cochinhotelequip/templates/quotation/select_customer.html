@@ -8,6 +8,42 @@ CHE.Customer
 
 {% block content %}
 
+<style>
+  /* Customize the scrollbar */
+  .table-responsive {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* For Firefox */
+  .table-responsive {
+    scrollbar-width: thin;
+    scrollbar-color: #46494c #222020;
+  }
+
+  /* For Webkit browsers (Chrome, Safari, etc.) */
+  .table-responsive::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  .table-responsive::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+    /* Light gray */
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    /* Blue color for the handle */
+    border-radius: 10px;
+    /* Rounded corners */
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+  }
+</style>
+
 <div class="container-fluid pt-4 px-4">
   <div class="bg-secondary text-center rounded p-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
