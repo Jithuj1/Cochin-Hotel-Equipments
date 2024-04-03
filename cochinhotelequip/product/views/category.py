@@ -64,7 +64,7 @@ def delete_category(request, category_id):
 
         Category.objects.get(id=category_id).delete()
     except ProtectedError:
-        messages.warning(request, "Cannot delete this object because it is referenced by other objects.")
+        messages.warning(request, "Cannot delete this object because it is used in product")
     return redirect(reverse('category')+f'?page={page_number}')
 
 
