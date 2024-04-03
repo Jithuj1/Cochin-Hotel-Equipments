@@ -1,7 +1,9 @@
 from datetime import datetime
 
 
-def fiscal_year_4digit(current_date=datetime.now()):
+def fiscal_year_4digit():
+    current_date = datetime.now()
+    
     if current_date.month >= 4:
         fiscal_year = current_date.year
     else:

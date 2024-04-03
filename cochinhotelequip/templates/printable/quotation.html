@@ -43,12 +43,7 @@
 
         .customer-info .fields {
             border-right: 1px solid #c4c4c4;
-            width: 30%;
-            padding-left: 10px;
-            display: -webkit-box;
-        }
-
-        .customer-info .last-field {
+            width: 50%;
             padding-left: 10px;
             display: -webkit-box;
         }
@@ -193,13 +188,18 @@
         <div style="height: 15px;"><br></div>
         <div class="customer-info">
             <div class="fields">
-                <p>Name : {{customer.full_name}} </p>
+                <p>Customer Name : {{customer.full_name}} </p>
             </div>
             <div class="fields">
-                <p>Phone : {{customer.phone}} </p>
+                <p>Customer Phone : {{customer.phone}} </p>
             </div>
-            <div class="last-field">
-                <p>Email : {{customer.email}} </p>
+        </div>
+        <div class="customer-info" style="margin-top: 10px;">
+            <div class="fields">
+                <p>Customer Email : {{customer.email}} </p>
+            </div>
+            <div class="fields">
+                <p>Delivery Vehicle No : {{quotation.vehicle_num}} </p>
             </div>
         </div>
     </section>

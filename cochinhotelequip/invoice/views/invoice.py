@@ -178,3 +178,16 @@ def delete_invoice_product(requset, invoice_id, invoice_item_id):
 
     invoice.calculate_total()
     return redirect('view_invoice', invoice_id)
+
+
+@login_required(login_url='login')
+def add_vehicle(request, invoice_id):
+    if request.method == 'POST':
+
+        invoice = Invoice.objects.get(id=invoice_id)
+        vehicle_num = request.POST.get('vehicle_num')
+        if vehicle_num !="":
+            invoice.vehicle_num = vehicle_num
+            invoice.save()
+
+        return redirect('view_invoice', invoice_id)

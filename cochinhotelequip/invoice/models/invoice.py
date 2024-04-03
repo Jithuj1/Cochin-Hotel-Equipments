@@ -33,6 +33,7 @@ class Invoice(BaseModel):
     invoice_num_seq = models.IntegerField(null=True)
     quotation_num_seq = models.IntegerField(null=True)
     invoice_num_fiscalyr = models.IntegerField(null=True)
+    vehicle_num = models.CharField(blank=True)
 
     class Meta(BaseModel.Meta):
         constraints = [
