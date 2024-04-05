@@ -72,9 +72,9 @@ class Invoice(BaseModel):
 
     def generate_invoice_num(self):
         fiscal_year_code = fiscal_year_4digit()
-
         highest_invoice_num_obj = (
-            Invoice.objects.filter(invoice_num_fiscalyr=fiscal_year_code, is_quotation=False)
+            Invoice.objects.filter(invoice_num_fiscalyr=fiscal_year_code)
+            .exclude(is_quotation=True)
             .order_by("-invoice_num_seq")
             .first()
         )

@@ -291,8 +291,9 @@ def convert_to_invoice(request, quotation_id: int):
 
     quotation.is_quotation = False
     quotation.invoice_date = datetime.date.today()
-    quotation.save()
 
-    quotation_items.update(is_active=True)
     quotation.generate_invoice_num()
+    quotation.save()
+    
+    quotation_items.update(is_active=True)
     return redirect('invoice')
