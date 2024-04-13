@@ -25,7 +25,7 @@ def generate_quotation_pdf(request, quotation_id):
     }
     company_address_ernakulam = {
         "street1": "Muttam, Choornikara",
-        "street2":"Kalamasserty, CMS College Rd, Ernakulam",
+        "street2":"Kalamassery, CMS College Rd, Ernakulam",
         "city":"Ernakulam",
         "state":"Kerala",
         "zipcode":"683106",
