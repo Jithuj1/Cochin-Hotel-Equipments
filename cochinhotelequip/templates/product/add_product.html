@@ -14,16 +14,9 @@
                 <form method="post" action="{% url 'new_product' %}">
                     {% csrf_token %}
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <a href="index.html" class="">
+                        <a href="#" class="">
                             <h4 class="text-white"><i class="fa fa-user-edit me-2"></i>Add New Product</h4>
                         </a>
-                        {% if messages %}
-                        <div class="alert alert-danger" role="alert">
-                            {% for message in messages %}
-                            {{ message }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div class="form-floating mb-3">

@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core.validators import RegexValidator
 
 
 class UserManager(BaseUserManager):
@@ -57,6 +58,12 @@ class User(AbstractBaseUser,):
     username = models.CharField(max_length=255, unique=True, null=True)
     phone = PhoneNumberField(unique=False, null=True, blank=True)
     gst_cus = models.BooleanField(default=False)
+    gst_num = models.CharField(
+        max_length=15, 
+        validators=[RegexValidator("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[A-Z][0-9A-Z]{1}$")],
+        blank=True,
+        unique=True
+    )
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

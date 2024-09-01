@@ -186,30 +186,6 @@
 
                         </div>
 
-                        <!-- scripts for modal -->
-                        <script>
-                            // get the toastbox element
-                            let toastBox = document.getElementById('toastbox')
-                            {% if messages %}
-                            {% for message in messages %}
-                            showToast('{{ message }}')
-                            {% endfor %}
-                            {% endif %}
-                            function showToast(message) {
-                                console.log('iamin')
-                                let toast = document.createElement('div')
-
-                                toast.classList.add('alert', 'alert-danger')
-                                toast.innerHTML = message
-                                toastBox.appendChild(toast);
-
-                                // after 6s toast will remove
-                                setTimeout(() => {
-                                    toast.remove()
-                                }, 6000)
-                            }
-                        </script>
-
                         {% endfor %}
                     </tbody>
                 </table>

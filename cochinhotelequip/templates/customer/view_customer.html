@@ -45,35 +45,6 @@ CHE.Home
 </style>
 
 
-<!-- error message -->
-{% if messages %}
-<!-- Modal -->
-<div id="errorModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="background-color: rgb(76, 95, 111); color: black;">
-            <div class="modal-body">
-                {% for message in messages %}
-                <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript to conditionally show the modal -->
-<script>
-    // Check if there are error messages
-    {% if messages %}
-    // Show the modal
-    $(document).ready(function () {
-        $('#errorModal').modal('show');
-    });
-    {% endif %}
-
-</script>
-{% endif %}
-
 <div class="table-responsive">
 
 
@@ -116,7 +87,7 @@ CHE.Home
                     <h6>Active Status : {{ customer.is_active }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>Date Joined : {{ customer.date_joined }}</h6>
+                    <h6>GST No : {{ customer.gst_num }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
                     <h6>Full Name : {{ customer.full_name }}</h6>

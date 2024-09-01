@@ -9,7 +9,8 @@ from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse
 import re
-
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 @login_required(login_url='login')
 def customer(request):
@@ -53,7 +54,7 @@ def add_customer(request):
         phone = request.POST.get('phone')
         display_name = request.POST.get('display_name')
         gst_cus = request.POST.get('gst_cus')
-        remarks = request.POST.get('remarks')
+        gst_num = request.POST.get('gst_num')
         country = request.POST.get('country')
         state = request.POST.get('state')
         city = request.POST.get('city')
@@ -73,6 +74,20 @@ def add_customer(request):
             if not phone_pattern.match(phone):
                 messages.error(request, "phone number is not acceptable")
                 return redirect('new_customer')
+        
+        if gst_num:
+            gst_validator = RegexValidator(
+                regex=r'^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[1-9A-Z]{1}$',
+            )
+            try:
+                gst_validator(gst_num)
+            except ValidationError as e:
+                messages.error(request, "Please enter a valid GST number")
+                return redirect('new_customer')
+            existing_gst = User.objects.filter(gst_num=gst_num).first()
+            if existing_gst:
+                messages.error(request, f"GST number {gst_num} is already taken by other customer")
+                return redirect('new_customer')
 
         try:
             with transaction.atomic():
@@ -82,7 +97,7 @@ def add_customer(request):
                     email = email,
                     phone = phone,
                     gst_cus = gst_cus,
-                    remarks = remarks,
+                    gst_num = gst_num,
                     display_name = display_name,
                 )
 
@@ -143,8 +158,8 @@ def delete_address(request, address_id):
     try:
         address.delete()
     except ProtectedError:
-        print(ProtectedError)
-    print('page',page_number)
+        pass
+
     url = reverse('view_customer', kwargs={'customer_id': address.customer.id}) +f'?page={page_number}'
     return redirect(url)
 
@@ -244,9 +259,9 @@ def update_customer(request, customer_id):
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         display_name = request.POST.get('display_name') 
-        remarks = request.POST.get('remarks')
+        gst_num = request.POST.get('gst_num')
 
-        if any(value is not None and value.isspace() for value in [first_name, last_name, email, phone, display_name, remarks]):
+        if any(value is not None and value.isspace() for value in [first_name, last_name, email, phone, display_name, gst_num]):
             messages.error(request, "Input cannot be blank or None")
             url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
             return redirect(url)
@@ -258,13 +273,31 @@ def update_customer(request, customer_id):
                 messages.error(request, "phone number is not acceptable")
                 url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
                 return redirect(url)
+        
+        if gst_num:
+            gst_validator = RegexValidator(
+                regex=r'^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[1-9A-Z]{1}$',
+            )
+            try:
+                gst_validator(gst_num)
+            except ValidationError as e:
+                pass
+                messages.error(request, "Please enter a valid GST number")
+                url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
+                return redirect(url)
+            
+            existing_gst = User.objects.filter(gst_num=gst_num).first()
+            if existing_gst:
+                messages.error(request, f"The GST number {gst_num} is already taken by another customer.")
+                url = reverse('update_customer', kwargs={'customer_id': customer_id})+f'?page={page_number}'
+                return redirect(url)
             
         customer.first_name = first_name if first_name != "" else customer.first_name
         customer.last_name = last_name if last_name != "" else customer.last_name
         customer.email = email if email != "" else customer.email
         customer.phone = phone if phone != "" else customer.phone
         customer.display_name = display_name if display_name != "" else customer.display_name
-        customer.remarks = remarks if remarks != "" else customer.remarks
+        customer.gst_num = gst_num if gst_num != "" else customer.gst_num
 
         customer.save()
         customer.update_customer_details()

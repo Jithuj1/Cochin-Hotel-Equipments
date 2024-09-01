@@ -17,13 +17,6 @@
                         <a href="#" class="">
                             <h4 class="text-white"><i class="fa fa-user-edit me-2"></i>Edit Customer Details</h4>
                         </a>
-                        {% if messages %}
-                        <div class="alert alert-danger" role="alert">
-                            {% for message in messages %}
-                            {{ message }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <div class="d-flex justify-content-between w-50">
@@ -87,13 +80,13 @@
                         <div class="d-flex justify-content-between w-50">
                             <div class="form-floating mb-3">
                                 <div class="form-floating mb-3" style="margin-left: 100px; margin-top: 13px;">
-                                    <h5>Remarks :</h5>
+                                    <h5>Gst No :</h5>
                                 </div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input name="remarks" type="text" class="form-control" id="floatingText"
+                                <input name="gst_num" type="text" class="form-control" id="floatingText"
                                     placeholder="jhondoe">
-                                <label for="floatingText">{{customer.remarks}}</label>
+                                <label for="floatingText">{{customer.gst_num}}</label>
                             </div>
                         </div>
                     </div>
