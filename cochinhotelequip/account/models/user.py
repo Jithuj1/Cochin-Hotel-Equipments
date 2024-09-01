@@ -61,7 +61,7 @@ class User(AbstractBaseUser,):
     gst_num = models.CharField(
         max_length=15, 
         validators=[RegexValidator("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[A-Z][0-9A-Z]{1}$")],
-        blank=True,
+        null=True,
         unique=True
     )
     is_staff = models.BooleanField(default=False)

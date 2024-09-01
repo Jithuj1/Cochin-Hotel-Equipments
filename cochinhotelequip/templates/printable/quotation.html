@@ -197,7 +197,7 @@
         </div>
         <div class="customer-info" style="margin-top: 10px;">
             <div class="fields">
-                <p>Customer GST : {{customer.gst_num}} </p>
+                <p>Customer GST : {{ customer.gst_num |default_if_none:''}} </p>
             </div>
             <div class="fields">
                 <p>Delivery Vehicle No : {{quotation.vehicle_num}} </p>

@@ -87,7 +87,7 @@ CHE.Home
                     <h6>Active Status : {{ customer.is_active }}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
-                    <h6>GST No : {{ customer.gst_num }}</h6>
+                    <h6>GST No : {{ customer.gst_num |default_if_none:''}}</h6>
                 </div>
                 <div class="w-25" style="text-align: left;">
                     <h6>Full Name : {{ customer.full_name }}</h6>

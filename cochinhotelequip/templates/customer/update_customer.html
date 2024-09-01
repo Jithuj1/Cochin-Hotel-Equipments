@@ -86,7 +86,7 @@
                             <div class="form-floating mb-3">
                                 <input name="gst_num" type="text" class="form-control" id="floatingText"
                                     placeholder="jhondoe">
-                                <label for="floatingText">{{customer.gst_num}}</label>
+                                <label for="floatingText">{{ customer.gst_num |default_if_none:''}}</label>
                             </div>
                         </div>
                     </div>
