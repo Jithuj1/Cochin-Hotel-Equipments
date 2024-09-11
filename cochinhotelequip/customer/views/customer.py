@@ -120,6 +120,7 @@ def add_customer(request):
                 return redirect('customer')
         except Exception as e :
             messages.error(request, f"{e}")
+            return redirect('new_customer')
  
         return render(request, 'customer/add_customer.html')
     
