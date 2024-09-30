@@ -97,7 +97,7 @@ def add_customer(request):
                     email = email,
                     phone = phone,
                     gst_cus = gst_cus,
-                    gst_num = gst_num,
+                    gst_num = gst_num if gst_num != "" else None,
                     display_name = display_name,
                 )
 
@@ -119,11 +119,9 @@ def add_customer(request):
                 address.update_customer_details()
                 return redirect('customer')
         except Exception as e :
-            messages.error(request, f"{e}")
+            messages.error(request, f"{str(e)}")
             return redirect('new_customer')
- 
-        return render(request, 'customer/add_customer.html')
-    
+     
 
 from django.http import HttpResponseBadRequest
 from django.db.models.deletion import ProtectedError
